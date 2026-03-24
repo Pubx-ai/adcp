@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/schemas/curation/provide-performance-feedback-response.json",
+  "title": "Provide Deal Performance Feedback Response",
+  "description": "Response payload for provide_deal_performance_feedback task. Returns either acknowledgment OR error information, never both.",
+  "type": "object",
+  "oneOf": [
+    {
+      "title": "PerformanceFeedbackSuccess",
+      "description": "Success response — feedback received and acknowledged",
+      "type": "object",
+      "properties": {
+        "acknowledged": {
+          "type": "boolean",
+          "const": true,
+          "description": "Confirms the feedback was received and will be used for optimization"
+        },
+        "optimization_notes": {
+          "type": "string",
+          "description": "Optional curator response describing any planned optimizations based on the feedback"
+        },
+        "context": {
+          "$ref": "/schemas/core/context.json"
+        },
+        "ext": {
+          "$ref": "/schemas/core/ext.json"
+        }
+      },
+      "required": ["acknowledged"],
+      "additionalProperties": true,
+      "not": {
+        "required": ["errors"]
+      }
+    },
+    {
+      "title": "PerformanceFeedbackError",
+      "description": "Error response — feedback could not be processed",
+      "type": "object",
+      "properties": {
+        "errors": {
+          "type": "array",
+          "description": "Array of errors explaining why the feedback failed",
+          "items": {
+            "$ref": "/schemas/core/error.json"
+          },
+          "minItems": 1
+        },
+        "context": {
+          "$ref": "/schemas/core/context.json"
+        },
+        "ext": {
+          "$ref": "/schemas/core/ext.json"
+        }
+      },
+      "required": ["errors"],
+      "additionalProperties": true,
+      "not": {
+        "anyOf": [
+          { "required": ["acknowledged"] },
+          { "required": ["optimization_notes"] }
+        ]
+      }
+    }
+  ]
+}

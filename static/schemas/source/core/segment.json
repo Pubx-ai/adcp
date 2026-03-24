@@ -1,0 +1,123 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/schemas/core/segment.json",
+  "title": "Segment",
+  "description": "Represents a curated audience segment — the atomic unit of inventory in the curation protocol. Segments define targetable audiences or contexts through rules managed internally by the curator. They are discovered through the protocol (via get_segments), not created by buyers.",
+  "type": "object",
+  "properties": {
+    "segment_id": {
+      "type": "string",
+      "description": "Unique identifier for the segment"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable segment name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of what this segment targets and its intended use cases"
+    },
+    "categories": {
+      "type": "array",
+      "description": "Category labels for filtering and organization (e.g., 'sports', 'automotive', 'luxury', 'news')",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "targeting_summary": {
+      "type": "string",
+      "description": "Plain-language summary of targeting rules (geo, contextual, behavioral, device). The protocol does not expose raw targeting rules — those are internal to the curator."
+    },
+    "estimated_daily_impressions": {
+      "type": "number",
+      "description": "Estimated daily available impressions across all supported platforms",
+      "minimum": 0
+    },
+    "estimated_reach": {
+      "type": "number",
+      "description": "Estimated unique users reachable through this segment",
+      "minimum": 0
+    },
+    "supported_platforms": {
+      "type": "array",
+      "description": "SSP platform IDs where this segment can be activated. Cross-reference with list_platforms for platform details.",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "supported_ad_format_types": {
+      "type": "array",
+      "description": "Ad format types available for this segment",
+      "items": {
+        "$ref": "/schemas/enums/ssp-ad-format-type.json"
+      },
+      "uniqueItems": true
+    },
+    "countries": {
+      "type": "array",
+      "description": "Countries where this segment has coverage, as ISO 3166-1 alpha-2 codes",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z]{2}$"
+      },
+      "uniqueItems": true
+    },
+    "devices": {
+      "type": "array",
+      "description": "Device types with coverage for this segment",
+      "items": {
+        "type": "string",
+        "enum": ["desktop", "mobile", "tablet", "ctv"]
+      },
+      "uniqueItems": true
+    },
+    "pricing_guidance": {
+      "type": "object",
+      "description": "Indicative pricing for this segment. Actual deal pricing is set in create_deal.",
+      "properties": {
+        "floor_cpm": {
+          "type": "number",
+          "description": "Suggested minimum CPM floor price",
+          "minimum": 0
+        },
+        "suggested_cpm": {
+          "type": "number",
+          "description": "Curator's recommended CPM for competitive win rates",
+          "minimum": 0
+        },
+        "currency": {
+          "type": "string",
+          "description": "ISO 4217 currency code",
+          "pattern": "^[A-Z]{3}$"
+        }
+      },
+      "required": ["currency"],
+      "additionalProperties": false
+    },
+    "status": {
+      "type": "string",
+      "description": "Segment availability status",
+      "enum": ["active", "deprecated"]
+    },
+    "version": {
+      "type": "integer",
+      "description": "Segment version number. Incremented when the curator updates targeting rules.",
+      "minimum": 1
+    },
+    "brief_relevance": {
+      "type": "string",
+      "description": "Explanation of why this segment matches the brief. Only included when buying_mode is 'brief'."
+    },
+    "ext": {
+      "$ref": "/schemas/core/ext.json"
+    }
+  },
+  "required": [
+    "segment_id",
+    "name",
+    "description"
+  ],
+  "additionalProperties": true
+}

@@ -123,6 +123,61 @@
       "title": "SyncCatalogsAsyncSubmitted",
       "description": "Acknowledgment for submitted sync_catalogs",
       "$ref": "/schemas/media-buy/sync-catalogs-async-response-submitted.json"
+    },
+    {
+      "title": "CreateDealResponse",
+      "description": "Response for completed or failed create_deal",
+      "$ref": "/schemas/curation/create-deal-response.json"
+    },
+    {
+      "title": "CreateDealAsyncWorking",
+      "description": "Progress data for working create_deal",
+      "$ref": "/schemas/curation/create-deal-async-response-working.json"
+    },
+    {
+      "title": "CreateDealAsyncInputRequired",
+      "description": "Input requirements for create_deal needing user input",
+      "$ref": "/schemas/curation/create-deal-async-response-input-required.json"
+    },
+    {
+      "title": "CreateDealAsyncSubmitted",
+      "description": "Acknowledgment for submitted create_deal",
+      "$ref": "/schemas/curation/create-deal-async-response-submitted.json"
+    },
+    {
+      "title": "UpdateDealResponse",
+      "description": "Response for completed or failed update_deal",
+      "$ref": "/schemas/curation/update-deal-response.json"
+    },
+    {
+      "title": "UpdateDealAsyncWorking",
+      "description": "Progress data for working update_deal",
+      "$ref": "/schemas/curation/update-deal-async-response-working.json"
+    },
+    {
+      "title": "UpdateDealAsyncInputRequired",
+      "description": "Input requirements for update_deal needing user input",
+      "$ref": "/schemas/curation/update-deal-async-response-input-required.json"
+    },
+    {
+      "title": "UpdateDealAsyncSubmitted",
+      "description": "Acknowledgment for submitted update_deal",
+      "$ref": "/schemas/curation/update-deal-async-response-submitted.json"
+    },
+    {
+      "title": "GetSegmentsResponse",
+      "description": "Response for completed or failed get_segments",
+      "$ref": "/schemas/curation/get-segments-response.json"
+    },
+    {
+      "title": "GetSegmentsAsyncWorking",
+      "description": "Progress data for working get_segments",
+      "$ref": "/schemas/curation/get-segments-async-response-working.json"
+    },
+    {
+      "title": "GetSegmentsAsyncSubmitted",
+      "description": "Acknowledgment for submitted get_segments",
+      "$ref": "/schemas/curation/get-segments-async-response-submitted.json"
     }
   ]
 }

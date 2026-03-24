@@ -1,0 +1,94 @@
+---
+title: get_deal_delivery
+sidebarTitle: get_deal_delivery
+description: Retrieve deal delivery metrics
+testable: true
+---
+
+Retrieve SSP-side delivery metrics for deals including curation-specific metrics (bids, wins, win rate) not available in media buy delivery. This is the curation equivalent of [`get_media_buy_delivery`](/docs/media-buy/task-reference/get_media_buy_delivery).
+
+**Response time**: < 15s | **Schema**: [`get-deal-delivery-request`](https://adcontextprotocol.org/schemas/latest/curation/get-deal-delivery-request.json) / [`get-deal-delivery-response`](https://adcontextprotocol.org/schemas/latest/curation/get-deal-delivery-response.json)
+
+## Quick start
+
+<CodeGroup>
+```javascript JavaScript
+const delivery = await agent.getDealDelivery({
+  deal_ids: ["deal_abc123"],
+  include_daily_breakdown: true
+});
+
+for (const d of delivery.deal_deliveries) {
+  const { impressions, spend, win_rate, avg_cpm } = d.totals;
+  console.log(`${d.deal_id}: ${impressions} imps, $${spend} spend, ${(win_rate * 100).toFixed(1)}% win rate, $${avg_cpm} avg CPM`);
+}
+```
+
+```python Python
+delivery = agent.get_deal_delivery(
+    deal_ids=["deal_abc123"],
+    include_daily_breakdown=True
+)
+```
+</CodeGroup>
+
+## Request fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `deal_ids` | string[] | One of deal_ids/buyer_refs | Deals to report on |
+| `buyer_refs` | string[] | One of deal_ids/buyer_refs | Alternative lookup |
+| `start_date` | `YYYY-MM-DD` | No | Reporting period start |
+| `end_date` | `YYYY-MM-DD` | No | Reporting period end |
+| `include_daily_breakdown` | boolean | No | Include daily metrics (default: false) |
+
+## Curation-specific metrics
+
+These metrics are unique to curation deals and not found in media buy delivery:
+
+| Metric | Type | Description |
+|--------|------|-------------|
+| `bids` | integer | Total bid requests sent to DSPs |
+| `wins` | integer | Total auction wins |
+| `win_rate` | decimal | Wins / bids (e.g., 0.05 = 5%) |
+| `avg_cpm` | number | Average clearing CPM |
+
+## Example response
+
+```json
+{
+  "$schema": "/schemas/latest/curation/get-deal-delivery-response.json",
+  "reporting_period": {
+    "start": "2026-04-01",
+    "end": "2026-04-15"
+  },
+  "currency": "USD",
+  "deal_deliveries": [
+    {
+      "deal_id": "deal_abc123",
+      "buyer_ref": "acme_sports_q2_magnite",
+      "status": "active",
+      "totals": {
+        "impressions": 1250000,
+        "spend": 18750.00,
+        "bids": 45000000,
+        "wins": 1250000,
+        "win_rate": 0.028,
+        "avg_cpm": 15.00
+      },
+      "by_dsp": [
+        {
+          "dsp_id": 2249,
+          "dsp_name": "DV360",
+          "impressions": 1250000,
+          "spend": 18750.00,
+          "bids": 45000000,
+          "wins": 1250000,
+          "win_rate": 0.028,
+          "avg_cpm": 15.00
+        }
+      ]
+    }
+  ]
+}
+```

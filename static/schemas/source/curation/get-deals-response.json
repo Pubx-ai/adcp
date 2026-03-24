@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/schemas/curation/get-deals-response.json",
+  "title": "Get Deals Response",
+  "description": "Response payload for get_deals task. Returns deals matching the request filters.",
+  "type": "object",
+  "properties": {
+    "deals": {
+      "type": "array",
+      "description": "Array of matching deals",
+      "items": {
+        "$ref": "/schemas/core/deal.json"
+      }
+    },
+    "errors": {
+      "type": "array",
+      "description": "Task-specific errors and warnings",
+      "items": {
+        "$ref": "/schemas/core/error.json"
+      }
+    },
+    "pagination": {
+      "$ref": "/schemas/core/pagination-response.json"
+    },
+    "sandbox": {
+      "type": "boolean",
+      "description": "When true, this response contains simulated data from sandbox mode."
+    },
+    "context": {
+      "$ref": "/schemas/core/context.json"
+    },
+    "ext": {
+      "$ref": "/schemas/core/ext.json"
+    }
+  },
+  "required": [
+    "deals"
+  ],
+  "additionalProperties": true
+}

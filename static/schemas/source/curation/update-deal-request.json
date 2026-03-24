@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/schemas/curation/update-deal-request.json",
+  "title": "Update Deal Request",
+  "description": "Request parameters for updating a deal. Uses PATCH semantics — only send fields to change. Mutable fields: pricing (floor/fixed price), curator fee, flight dates, pause/resume status. Immutable fields (deal_type, buyer seats, platform) cannot be changed after creation.",
+  "type": "object",
+  "properties": {
+    "deal_id": {
+      "type": "string",
+      "description": "Protocol-level deal ID to update"
+    },
+    "buyer_ref": {
+      "type": "string",
+      "description": "Alternative lookup by buyer reference"
+    },
+    "pricing": {
+      "$ref": "/schemas/core/deal-pricing.json",
+      "description": "Updated pricing. For curated/PMP deals, floor_price can be adjusted mid-flight without buyer re-acceptance. For PG deals, price changes may require buyer re-acceptance on some DSPs."
+    },
+    "curator_fee": {
+      "type": "object",
+      "description": "Updated curator fee structure",
+      "properties": {
+        "fee_type": {
+          "$ref": "/schemas/enums/curator-fee-type.json"
+        },
+        "fee_amount": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": ["fee_type", "fee_amount"],
+      "additionalProperties": false
+    },
+    "start_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Updated campaign start date/time in ISO 8601 format"
+    },
+    "end_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Updated campaign end date/time in ISO 8601 format"
+    },
+    "paused": {
+      "type": "boolean",
+      "description": "Pause (true) or resume (false) the deal. A paused deal stops receiving bid requests on the SSP."
+    },
+    "push_notification_config": {
+      "$ref": "/schemas/core/push-notification-config.json",
+      "description": "Optional webhook configuration for async update status notifications."
+    },
+    "context": {
+      "$ref": "/schemas/core/context.json"
+    },
+    "ext": {
+      "$ref": "/schemas/core/ext.json"
+    }
+  },
+  "anyOf": [
+    { "required": ["deal_id"] },
+    { "required": ["buyer_ref"] }
+  ],
+  "additionalProperties": true
+}

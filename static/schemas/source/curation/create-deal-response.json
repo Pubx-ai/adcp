@@ -1,0 +1,194 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/schemas/curation/create-deal-response.json",
+  "title": "Create Deal Response",
+  "description": "Response payload for create_deal task. Returns either complete success data OR error information, never both. This enforces atomic operation semantics — the deal is either fully created or not created at all.",
+  "type": "object",
+  "oneOf": [
+    {
+      "title": "CreateDealSuccess",
+      "description": "Success response — deal created and activation initiated on the SSP",
+      "type": "object",
+      "properties": {
+        "deal_id": {
+          "type": "string",
+          "description": "Protocol-level deal identifier. Use this in get_deals, update_deal, and other protocol calls."
+        },
+        "buyer_ref": {
+          "type": "string",
+          "description": "Buyer's reference identifier for this deal, echoed from the request"
+        },
+        "buyer_campaign_ref": {
+          "type": "string",
+          "description": "Buyer's campaign reference label, echoed from the request"
+        },
+        "status": {
+          "$ref": "/schemas/enums/deal-status.json",
+          "description": "Current deal status. Typically 'pending_activation' or 'active' depending on SSP activation speed."
+        },
+        "deal_type": {
+          "$ref": "/schemas/enums/deal-type.json",
+          "description": "Type of SSP deal created"
+        },
+        "platform": {
+          "type": "object",
+          "description": "SSP platform where the deal was activated",
+          "properties": {
+            "platform_id": {
+              "type": "string",
+              "description": "SSP platform identifier"
+            },
+            "platform_name": {
+              "type": "string",
+              "description": "Human-readable SSP name"
+            },
+            "ssp_deal_id": {
+              "type": "string",
+              "description": "SSP-assigned deal ID. Buyers use this to target the deal in their DSP. May be absent if activation is still pending."
+            }
+          },
+          "required": ["platform_id"],
+          "additionalProperties": true
+        },
+        "dsps": {
+          "type": "array",
+          "description": "Per-DSP activation results",
+          "items": {
+            "type": "object",
+            "properties": {
+              "dsp_id": {
+                "oneOf": [
+                  { "type": "integer" },
+                  { "type": "string" }
+                ],
+                "description": "DSP identifier"
+              },
+              "dsp_name": {
+                "type": "string",
+                "description": "Human-readable DSP name"
+              },
+              "seat_id": {
+                "type": "string",
+                "description": "Buyer's seat ID on the SSP for this DSP"
+              },
+              "buyer_deal_id": {
+                "type": "string",
+                "description": "DSP-specific deal ID, if available after activation"
+              },
+              "status": {
+                "type": "string",
+                "description": "Per-DSP activation status",
+                "enum": ["pending", "active", "failed"]
+              }
+            },
+            "required": ["seat_id"],
+            "additionalProperties": true
+          },
+          "minItems": 1
+        },
+        "segments": {
+          "type": "array",
+          "description": "Segments included in this deal",
+          "items": {
+            "type": "object",
+            "properties": {
+              "segment_id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "required": ["segment_id"],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "pricing": {
+          "$ref": "/schemas/core/deal-pricing.json",
+          "description": "Applied pricing for this deal"
+        },
+        "curator_fee": {
+          "type": "object",
+          "description": "Curator fee details, if disclosed",
+          "properties": {
+            "fee_type": {
+              "$ref": "/schemas/enums/curator-fee-type.json"
+            },
+            "fee_amount": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "required": ["fee_type", "fee_amount"],
+          "additionalProperties": false
+        },
+        "start_time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Campaign start date/time in ISO 8601 format"
+        },
+        "end_time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Campaign end date/time in ISO 8601 format"
+        },
+        "sandbox": {
+          "type": "boolean",
+          "description": "When true, this response contains simulated data from sandbox mode."
+        },
+        "context": {
+          "$ref": "/schemas/core/context.json"
+        },
+        "ext": {
+          "$ref": "/schemas/core/ext.json"
+        }
+      },
+      "required": [
+        "deal_id",
+        "buyer_ref",
+        "status",
+        "platform",
+        "dsps",
+        "segments"
+      ],
+      "additionalProperties": true,
+      "not": {
+        "required": ["errors"]
+      }
+    },
+    {
+      "title": "CreateDealError",
+      "description": "Error response — operation failed, no deal created",
+      "type": "object",
+      "properties": {
+        "errors": {
+          "type": "array",
+          "description": "Array of errors explaining why the operation failed",
+          "items": {
+            "$ref": "/schemas/core/error.json"
+          },
+          "minItems": 1
+        },
+        "context": {
+          "$ref": "/schemas/core/context.json"
+        },
+        "ext": {
+          "$ref": "/schemas/core/ext.json"
+        }
+      },
+      "required": ["errors"],
+      "additionalProperties": true,
+      "not": {
+        "anyOf": [
+          { "required": ["deal_id"] },
+          { "required": ["buyer_ref"] },
+          { "required": ["platform"] },
+          { "required": ["dsps"] },
+          { "required": ["sandbox"] },
+          { "required": ["segments"] }
+        ]
+      }
+    }
+  ]
+}

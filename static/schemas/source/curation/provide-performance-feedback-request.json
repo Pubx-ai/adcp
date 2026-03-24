@@ -1,0 +1,91 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/schemas/curation/provide-performance-feedback-request.json",
+  "title": "Provide Deal Performance Feedback Request",
+  "description": "Request parameters for sending DSP-side performance metrics back to the curator. Enables closed-loop optimization by sharing data the curator cannot access through SSP reporting alone (clicks, conversions, viewability from the buyer's DSP).",
+  "type": "object",
+  "properties": {
+    "deal_id": {
+      "type": "string",
+      "description": "Protocol-level deal ID to provide feedback for"
+    },
+    "buyer_ref": {
+      "type": "string",
+      "description": "Alternative lookup by buyer reference"
+    },
+    "measurement_period": {
+      "type": "object",
+      "description": "Time period these metrics cover",
+      "properties": {
+        "start": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Period start in ISO 8601"
+        },
+        "end": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Period end in ISO 8601"
+        }
+      },
+      "required": ["start", "end"],
+      "additionalProperties": false
+    },
+    "performance_index": {
+      "type": "number",
+      "description": "Normalized performance score (0-10). Allows comparison across different metric types. 5 = meets expectations, >7 = strong performance, <3 = underperforming.",
+      "minimum": 0,
+      "maximum": 10
+    },
+    "dsp_metrics": {
+      "type": "object",
+      "description": "DSP-observed metrics for the measurement period. These are metrics the curator cannot access through SSP reporting.",
+      "properties": {
+        "impressions": {
+          "type": "integer",
+          "description": "DSP-counted impressions (may differ from SSP count due to discrepancies)",
+          "minimum": 0
+        },
+        "clicks": {
+          "type": "integer",
+          "description": "Total clicks",
+          "minimum": 0
+        },
+        "ctr": {
+          "type": "number",
+          "description": "Click-through rate as a decimal (clicks / impressions)",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "conversions": {
+          "type": "integer",
+          "description": "Total conversions attributed to this deal",
+          "minimum": 0
+        },
+        "viewability_rate": {
+          "type": "number",
+          "description": "Viewability rate as a decimal (viewable impressions / measured impressions)",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "notes": {
+      "type": "string",
+      "description": "Free-text feedback or optimization requests (e.g., 'This deal is underperforming on conversions — consider refreshing the segment targeting')."
+    },
+    "context": {
+      "$ref": "/schemas/core/context.json"
+    },
+    "ext": {
+      "$ref": "/schemas/core/ext.json"
+    }
+  },
+  "anyOf": [
+    { "required": ["deal_id"] },
+    { "required": ["buyer_ref"] }
+  ],
+  "required": ["measurement_period", "performance_index"],
+  "additionalProperties": true
+}

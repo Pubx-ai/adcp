@@ -3,7 +3,7 @@
   "name": "AdCP - Ad Context Protocol",
   "description": "AdCP (Ad Context Protocol) is the open standard for agentic advertising. It defines how AI agents buy media, generate creatives, activate audiences, and enforce governance across platforms.",
   "metadata": {
-    "og:site_name": "AdCP \u2014 Ad Context Protocol",
+    "og:site_name": "AdCP — Ad Context Protocol",
     "og:image": "https://docs.adcontextprotocol.org/images/concepts/protocol-domain-map.png",
     "og:image:width": "1200",
     "og:image:height": "630",
@@ -422,6 +422,32 @@
                           "docs/signals/specification",
                           "docs/signals/tasks/get_signals",
                           "docs/signals/tasks/activate_signal"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "group": "Curation",
+                    "pages": [
+                      "docs/curation/index",
+                      "docs/curation/specification",
+                      {
+                        "group": "Segment Discovery",
+                        "pages": [
+                          "docs/curation/segment-discovery/index"
+                        ]
+                      },
+                      {
+                        "group": "Task Reference",
+                        "pages": [
+                          "docs/curation/task-reference/index",
+                          "docs/curation/task-reference/get_segments",
+                          "docs/curation/task-reference/list_platforms",
+                          "docs/curation/task-reference/create_deal",
+                          "docs/curation/task-reference/get_deals",
+                          "docs/curation/task-reference/update_deal",
+                          "docs/curation/task-reference/get_deal_delivery",
+                          "docs/curation/task-reference/provide_deal_performance_feedback"
                         ]
                       }
                     ]
@@ -867,6 +893,32 @@
                     ]
                   }
                 ]
+              },
+              {
+                "group": "Curation",
+                "pages": [
+                  "docs/curation/index",
+                  "docs/curation/specification",
+                  {
+                    "group": "Segment Discovery",
+                    "pages": [
+                      "docs/curation/segment-discovery/index"
+                    ]
+                  },
+                  {
+                    "group": "Task Reference",
+                    "pages": [
+                      "docs/curation/task-reference/index",
+                      "docs/curation/task-reference/get_segments",
+                      "docs/curation/task-reference/list_platforms",
+                      "docs/curation/task-reference/create_deal",
+                      "docs/curation/task-reference/get_deals",
+                      "docs/curation/task-reference/update_deal",
+                      "docs/curation/task-reference/get_deal_delivery",
+                      "docs/curation/task-reference/provide_deal_performance_feedback"
+                    ]
+                  }
+                ]
               }
             ]
           },
@@ -1277,6 +1329,10 @@
     {
       "source": "/docs/guides/creator-studios",
       "destination": "/docs/media-buy/commerce-media"
+    },
+    {
+      "source": "/docs/curation/coming-soon",
+      "destination": "/docs/curation/index"
     }
   ],
   "modeToggle": {

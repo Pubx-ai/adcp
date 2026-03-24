@@ -1,0 +1,90 @@
+---
+title: provide_deal_performance_feedback
+sidebarTitle: provide_deal_performance_feedback
+description: Send DSP-side performance metrics to curator
+testable: true
+---
+
+Send DSP-side performance metrics back to the curator to enable closed-loop optimization. This task shares data the curator cannot access through SSP reporting alone — clicks, conversions, and viewability from the buyer's DSP.
+
+**Response time**: < 5s | **Schema**: [`provide-performance-feedback-request`](https://adcontextprotocol.org/schemas/latest/curation/provide-performance-feedback-request.json) / [`provide-performance-feedback-response`](https://adcontextprotocol.org/schemas/latest/curation/provide-performance-feedback-response.json)
+
+<Info>
+This task is OPTIONAL. There is currently no industry standard for buyer-to-curator performance sharing. Implementing this task positions both parties for better optimization outcomes.
+</Info>
+
+## Quick start
+
+<CodeGroup>
+```javascript JavaScript
+const result = await agent.provideDealPerformanceFeedback({
+  deal_id: "deal_abc123",
+  measurement_period: {
+    start: "2026-04-01T00:00:00Z",
+    end: "2026-04-15T00:00:00Z"
+  },
+  performance_index: 7.2,
+  dsp_metrics: {
+    impressions: 1200000,
+    clicks: 3600,
+    ctr: 0.003,
+    conversions: 120,
+    viewability_rate: 0.72
+  },
+  notes: "Strong CTV performance. Consider expanding sports segment coverage."
+});
+
+if (result.errors) {
+  throw new Error(`Feedback failed: ${JSON.stringify(result.errors)}`);
+} else {
+  console.log('Feedback acknowledged');
+  if (result.optimization_notes) {
+    console.log('Curator response:', result.optimization_notes);
+  }
+}
+```
+
+```python Python
+result = agent.provide_deal_performance_feedback(
+    deal_id="deal_abc123",
+    measurement_period={
+        "start": "2026-04-01T00:00:00Z",
+        "end": "2026-04-15T00:00:00Z"
+    },
+    performance_index=7.2,
+    dsp_metrics={
+        "impressions": 1200000,
+        "clicks": 3600,
+        "ctr": 0.003,
+        "conversions": 120,
+        "viewability_rate": 0.72
+    }
+)
+```
+</CodeGroup>
+
+## Request fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `deal_id` | string | One of deal_id/buyer_ref | Deal to provide feedback for |
+| `buyer_ref` | string | One of deal_id/buyer_ref | Alternative lookup |
+| `measurement_period` | `{ start, end }` | Yes | ISO 8601 time range |
+| `performance_index` | number (0-10) | Yes | Normalized score (5 = meets expectations) |
+| `dsp_metrics` | object | No | impressions, clicks, ctr, conversions, viewability_rate |
+| `notes` | string | No | Free-text feedback or optimization requests |
+
+## Response fields (success)
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `acknowledged` | boolean | Always `true` on success |
+| `optimization_notes` | string | Optional curator response with planned optimizations |
+
+## What curators can do with this data
+
+Without buyer feedback, curators optimize using SSP-side signals only (win rate, fill rate, clearing price). With buyer feedback:
+
+- **Win rate tuning** — Adjust floor prices based on actual conversion performance
+- **Segment refresh** — Update targeting rules based on CTR/conversion patterns
+- **Budget reallocation** — Shift inventory toward higher-performing segments
