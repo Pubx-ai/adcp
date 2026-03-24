@@ -57,7 +57,7 @@ Curator agents MUST implement:
 
 | Task | Purpose | Expected response time |
 | --- | --- | --- |
-| `get_segments` | Discover audience segments | \< 30s |
+| `get_segments` | Discover audience segments | ≤ 120s |
 | `list_platforms` | List SSP platform capabilities | \< 5s |
 | `create_deal` | Activate deal on SSP | \< 120s or async |
 | `get_deals` | List and filter deals | \< 10s |
@@ -69,13 +69,13 @@ Curator agents SHOULD implement:
 | Task | Purpose | Expected response time |
 | --- | --- | --- |
 | `update_deal` | Modify deal pricing, dates, or status | \< 30s or async |
-| `get_deal_delivery` | Retrieve delivery metrics | \< 15s |
+| `get_deal_delivery` | Retrieve delivery metrics | \< 30s |
 
 Curator agents MAY implement:
 
 | Task | Purpose | Expected response time |
 | --- | --- | --- |
-| `provide_deal_performance_feedback` | Receive buyer performance data | \< 5s |
+| `provide_deal_performance_feedback` | Receive buyer performance data | \< 30s |
 
 ## Deal status lifecycle
 
