@@ -3,7 +3,7 @@
   "name": "AdCP - Ad Context Protocol",
   "description": "AdCP (Ad Context Protocol) is the open standard for agentic advertising. It defines how AI agents buy media, generate creatives, activate audiences, and enforce governance across platforms.",
   "metadata": {
-    "og:site_name": "AdCP \u2014 Ad Context Protocol",
+    "og:site_name": "AdCP — Ad Context Protocol",
     "og:image": "https://docs.adcontextprotocol.org/images/concepts/protocol-domain-map.png",
     "og:image:width": "1200",
     "og:image:height": "630",
@@ -425,6 +425,32 @@
                         ]
                       }
                     ]
+                  },
+                  {
+                    "group": "Curation",
+                    "pages": [
+                      "docs/curation/index",
+                      "docs/curation/specification",
+                      {
+                        "group": "Segment Discovery",
+                        "pages": [
+                          "docs/curation/segment-discovery/index"
+                        ]
+                      },
+                      {
+                        "group": "Task Reference",
+                        "pages": [
+                          "docs/curation/task-reference/index",
+                          "docs/curation/task-reference/get_segments",
+                          "docs/curation/task-reference/list_platforms",
+                          "docs/curation/task-reference/create_deal",
+                          "docs/curation/task-reference/get_deals",
+                          "docs/curation/task-reference/update_deal",
+                          "docs/curation/task-reference/get_deal_delivery",
+                          "docs/curation/task-reference/provide_deal_performance_feedback"
+                        ]
+                      }
+                    ]
                   }
                 ]
               },
@@ -500,234 +526,6 @@
                   }
                 ]
               }
-            ]
-          },
-          {
-            "group": "Brand Protocol",
-            "pages": [
-              "docs/brand-protocol/index",
-              "docs/brand-protocol/brand-json"
-            ]
-          },
-          {
-            "group": "Accounts Protocol",
-            "pages": [
-              "docs/accounts/overview",
-              {
-                "group": "Tasks",
-                "pages": [
-                  "docs/accounts/tasks/sync_accounts",
-                  "docs/accounts/tasks/list_accounts",
-                  "docs/accounts/tasks/report_usage",
-                  "docs/accounts/tasks/get_account_financials"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "Signals Protocol",
-            "pages": [
-              "docs/signals/overview",
-              "docs/signals/specification",
-              "docs/signals/data-providers",
-              {
-                "group": "Tasks",
-                "pages": [
-                  "docs/signals/tasks/get_signals",
-                  "docs/signals/tasks/activate_signal"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "Curation Protocol",
-            "pages": [
-              "docs/curation/index",
-              "docs/curation/specification",
-              {
-                "group": "Segment Discovery",
-                "pages": [
-                  "docs/curation/segment-discovery/index"
-                ]
-              },
-              {
-                "group": "Task Reference",
-                "pages": [
-                  "docs/curation/task-reference/index",
-                  "docs/curation/task-reference/get_segments",
-                  "docs/curation/task-reference/list_platforms",
-                  "docs/curation/task-reference/create_deal",
-                  "docs/curation/task-reference/get_deals",
-                  "docs/curation/task-reference/update_deal",
-                  "docs/curation/task-reference/get_deal_delivery",
-                  "docs/curation/task-reference/provide_deal_performance_feedback"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "Sponsored Intelligence Protocol",
-            "pages": [
-              "docs/sponsored-intelligence/overview",
-              "docs/sponsored-intelligence/specification",
-              {
-                "group": "Tasks",
-                "pages": [
-                  "docs/sponsored-intelligence/tasks/index",
-                  "docs/sponsored-intelligence/tasks/si_get_offering",
-                  "docs/sponsored-intelligence/tasks/si_initiate_session",
-                  "docs/sponsored-intelligence/tasks/si_send_message",
-                  "docs/sponsored-intelligence/tasks/si_terminate_session"
-                ]
-              },
-              "docs/sponsored-intelligence/implementing-si-agents",
-              "docs/sponsored-intelligence/implementing-si-hosts"
-            ]
-          },
-          {
-            "group": "Media Buy Protocol",
-            "pages": [
-              "docs/media-buy/index",
-              "docs/media-buy/specification",
-              {
-                "group": "Task Reference",
-                "pages": [
-                  "docs/media-buy/task-reference/index",
-                  "docs/media-buy/task-reference/get_products",
-                  "docs/media-buy/task-reference/list_creative_formats",
-                  "docs/media-buy/task-reference/create_media_buy",
-                  "docs/media-buy/task-reference/sync_catalogs",
-                  "docs/media-buy/task-reference/list_creatives",
-                  "docs/media-buy/task-reference/sync_creatives",
-                  "docs/media-buy/task-reference/get_media_buys",
-                  "docs/media-buy/task-reference/get_media_buy_delivery",
-                  "docs/media-buy/task-reference/update_media_buy",
-                  "docs/media-buy/task-reference/provide_performance_feedback",
-                  "docs/media-buy/task-reference/sync_event_sources",
-                  "docs/media-buy/task-reference/log_event",
-                  "docs/media-buy/task-reference/sync_audiences"
-                ]
-              },
-              {
-                "group": "Capability Discovery",
-                "pages": [
-                  "docs/media-buy/capability-discovery/index",
-                  "docs/media-buy/capability-discovery/implementing-standard-formats"
-                ]
-              },
-              {
-                "group": "Product Discovery",
-                "pages": [
-                  "docs/media-buy/product-discovery/index",
-                  "docs/media-buy/product-discovery/brief-expectations",
-                  "docs/media-buy/product-discovery/example-briefs",
-                  "docs/media-buy/product-discovery/media-products",
-                  "docs/media-buy/product-discovery/refinement"
-                ]
-              },
-              {
-                "group": "Media Buys",
-                "pages": [
-                  "docs/media-buy/media-buys/index",
-                  "docs/media-buy/media-buys/optimization-reporting",
-                  "docs/media-buy/media-buys/policy-compliance"
-                ]
-              },
-              {
-                "group": "Creatives",
-                "pages": [
-                  "docs/media-buy/creatives/index"
-                ]
-              },
-              {
-                "group": "Conversion Tracking",
-                "pages": [
-                  "docs/media-buy/conversion-tracking/index"
-                ]
-              },
-              {
-                "group": "Advanced Topics",
-                "pages": [
-                  "docs/media-buy/advanced-topics/index",
-                  "docs/media-buy/advanced-topics/pricing-models",
-                  "docs/media-buy/advanced-topics/targeting",
-                  "docs/media-buy/advanced-topics/agentic-execution-engine",
-                  "docs/media-buy/advanced-topics/accounts-and-security",
-                  "docs/media-buy/advanced-topics/sandbox"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "Creative",
-            "pages": [
-              "docs/creative/index",
-              "docs/creative/specification",
-              "docs/creative/formats",
-              "docs/creative/asset-types",
-              "docs/creative/creative-manifests",
-              "docs/creative/universal-macros",
-              "docs/creative/implementing-creative-agents",
-              "docs/creative/generative-creative",
-              "docs/creative/template-format-ids",
-              "docs/creative/catalogs",
-              "docs/creative/accessibility",
-              "docs/creative/provenance",
-              {
-                "group": "Channel Guides",
-                "pages": [
-                  "docs/creative/channels/video",
-                  "docs/creative/channels/display",
-                  "docs/creative/channels/audio",
-                  "docs/creative/channels/dooh",
-                  "docs/creative/channels/carousels"
-                ]
-              },
-              {
-                "group": "Task Reference",
-                "pages": [
-                  "docs/creative/task-reference/build_creative",
-                  "docs/creative/task-reference/preview_creative",
-                  "docs/creative/task-reference/preview_creative-advanced",
-                  "docs/creative/task-reference/list_creative_formats",
-                  "docs/creative/task-reference/get_creative_delivery"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "Industry Guides",
-            "pages": [
-              "docs/guides/index",
-              "docs/guides/commerce-media"
-            ]
-          },
-          {
-            "group": "Reference",
-            "pages": [
-              {
-                "group": "Registry API",
-                "openapi": {
-                  "source": "static/openapi/registry.yaml",
-                  "directory": "docs/registry/api-reference"
-                },
-                "pages": [
-                  "docs/registry/index"
-                ]
-              },
-              "docs/reference/gmsf-reference",
-              "docs/reference/media-channel-taxonomy",
-              "docs/reference/roadmap",
-              "docs/reference/release-notes",
-              "docs/reference/changelog",
-              "docs/reference/implementor-faq",
-              "docs/reference/glossary"
-            ]
-          },
-          {
-            "group": "Community",
-            "pages": [
-              "docs/community/working-group"
             ]
           }
         ]
@@ -1095,42 +893,31 @@
                     ]
                   }
                 ]
-              }
-            ]
-          },
-          {
-            "group": "Creative",
-            "pages": [
-              "docs/creative/index",
-              "docs/creative/specification",
-              "docs/creative/formats",
-              "docs/creative/asset-types",
-              "docs/creative/creative-manifests",
-              "docs/creative/universal-macros",
-              "docs/creative/implementing-creative-agents",
-              "docs/creative/generative-creative",
-              "docs/creative/template-format-ids",
-              "docs/creative/catalogs",
-              "docs/creative/accessibility",
-              "docs/creative/provenance",
-              {
-                "group": "Channel Guides",
-                "pages": [
-                  "docs/creative/channels/video",
-                  "docs/creative/channels/display",
-                  "docs/creative/channels/audio",
-                  "docs/creative/channels/dooh",
-                  "docs/creative/channels/carousels"
-                ]
               },
               {
-                "group": "Task Reference",
+                "group": "Curation",
                 "pages": [
-                  "docs/creative/task-reference/build_creative",
-                  "docs/creative/task-reference/preview_creative",
-                  "docs/creative/task-reference/preview_creative-advanced",
-                  "docs/creative/task-reference/list_creative_formats",
-                  "docs/creative/task-reference/get_creative_delivery"
+                  "docs/curation/index",
+                  "docs/curation/specification",
+                  {
+                    "group": "Segment Discovery",
+                    "pages": [
+                      "docs/curation/segment-discovery/index"
+                    ]
+                  },
+                  {
+                    "group": "Task Reference",
+                    "pages": [
+                      "docs/curation/task-reference/index",
+                      "docs/curation/task-reference/get_segments",
+                      "docs/curation/task-reference/list_platforms",
+                      "docs/curation/task-reference/create_deal",
+                      "docs/curation/task-reference/get_deals",
+                      "docs/curation/task-reference/update_deal",
+                      "docs/curation/task-reference/get_deal_delivery",
+                      "docs/curation/task-reference/provide_deal_performance_feedback"
+                    ]
+                  }
                 ]
               }
             ]
@@ -1139,13 +926,6 @@
             "group": "FAQ",
             "pages": [
               "docs/faq"
-            ]
-          },
-          {
-            "group": "Industry Guides",
-            "pages": [
-              "docs/guides/index",
-              "docs/guides/commerce-media"
             ]
           },
           {
