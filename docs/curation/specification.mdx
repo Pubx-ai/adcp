@@ -79,23 +79,24 @@ Curator agents MAY implement:
 
 ## Deal status lifecycle
 
-```text
-                    ┌──────────────┐
-                    │   rejected   │
-                    └──────────────┘
-                          ▲
-                          │ (curator/SSP rejects)
-                          │
-┌──────────────┐    ┌─────┴────────┐    ┌──────────────────┐    ┌──────────┐
-│   created    │───>│   pending    │───>│ pending          │───>│  active  │
-│  (internal)  │    │   approval   │    │ activation       │    │          │
-└──────────────┘    └──────────────┘    └──────────────────┘    └────┬─────┘
-                                               │                     │
-                                               │ (SSP fails)         ├──> paused ──> active
-                                               ▼                     │
-                                        ┌──────────┐                ├──> completed
-                                        │  failed  │                │
-                                        └──────────┘                └──> canceled
+```mermaid
+flowchart LR
+    created["created<br/>(internal)"] --> pending_approval["pending_approval"]
+    pending_approval -->|"approved"| pending_activation["pending_activation"]
+    pending_approval -->|"curator/SSP rejects"| rejected["rejected"]
+    pending_activation -->|"SSP activates"| active["active"]
+    pending_activation -->|"SSP fails"| failed["failed"]
+    active -->|"pause"| paused["paused"]
+    paused -->|"resume"| active
+    active -->|"flight ends"| completed["completed"]
+    active -->|"buyer cancels"| canceled["canceled"]
+
+    style rejected fill:#fef2f2,stroke:#ef4444
+    style failed fill:#fef2f2,stroke:#ef4444
+    style active fill:#f0fdf4,stroke:#22c55e
+    style completed fill:#eff6ff,stroke:#3b82f6
+    style canceled fill:#fefce8,stroke:#eab308
+    style paused fill:#fefce8,stroke:#eab308
 ```
 
 ## Async operations

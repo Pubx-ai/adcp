@@ -26,11 +26,34 @@ The Curation Protocol is new in AdCP 3.0. Schemas are available at `/schemas/lat
 
 The curation workflow has three phases: **discover**, **select**, and **activate**.
 
-```
-Buyer Agent ──(Curation Protocol)──> Curator Agent ──(SSP API)──> SSP Platform
-                                          │                            │
-                                     Segment Catalog              Deal Activation
-                                     (audiences, rules)           (PMP / Curated deals)
+```mermaid
+sequenceDiagram
+    participant Buyer as Buyer Agent
+    participant Curator as Curator Agent
+    participant SSP as SSP Platform
+
+    rect rgb(240, 253, 244)
+    Note over Buyer,Curator: Discovery
+    Buyer->>Curator: get_segments (brief / catalog / refine)
+    Curator-->>Buyer: segments[] + proposals[]
+    Buyer->>Curator: list_platforms
+    Curator-->>Buyer: platforms[] with DSP integrations
+    end
+
+    rect rgb(239, 246, 255)
+    Note over Buyer,SSP: Activation
+    Buyer->>Curator: create_deal (segments, platform, DSP seats, pricing)
+    Curator->>SSP: Create PMP / Curated deal
+    SSP-->>Curator: ssp_deal_id
+    Curator-->>Buyer: deal_id + ssp_deal_id + status
+    end
+
+    rect rgb(254, 249, 235)
+    Note over Buyer,SSP: Monitoring
+    Buyer->>Curator: get_deals / get_deal_delivery
+    Curator-->>Buyer: deal status + delivery metrics
+    Buyer->>Curator: provide_deal_performance_feedback
+    end
 ```
 
 1. **Discover segments** — Use `get_segments` with a natural language brief, structured filters, or refinement of previous results
