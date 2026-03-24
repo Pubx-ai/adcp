@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/schemas/curation/get-segments-async-response-working.json",
+  "title": "Get Segments - Working",
+  "description": "Progress payload for active get_segments task.",
+  "type": "object",
+  "properties": {
+    "percentage": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Progress percentage of the segment discovery operation"
+    },
+    "current_step": {
+      "type": "string",
+      "description": "Current step in the discovery process (e.g., 'searching_segments', 'ranking_relevance')"
+    },
+    "total_steps": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Total number of steps in the discovery process"
+    },
+    "step_number": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Current step number"
+    },
+    "segments_evaluated": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of segments that have been scored so far"
+    },
+    "context": {
+      "$ref": "/schemas/core/context.json"
+    },
+    "ext": {
+      "$ref": "/schemas/core/ext.json"
+    }
+  },
+  "additionalProperties": true
+}

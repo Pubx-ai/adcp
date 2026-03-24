@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/schemas/enums/deal-type.json",
+  "title": "Deal Type",
+  "description": "Type of programmatic deal on an SSP platform.",
+  "type": "string",
+  "enum": [
+    "curated",
+    "pmp",
+    "preferred_deal",
+    "programmatic_guaranteed"
+  ],
+  "enumDescriptions": {
+    "curated": "Curated marketplace deal — curator packages inventory from multiple publisher sources with audience or contextual enrichment",
+    "pmp": "Private marketplace deal — invitation-only auction with floor price, single publisher or curated supply",
+    "preferred_deal": "Fixed-price deal with first-look priority, no impression guarantee",
+    "programmatic_guaranteed": "Guaranteed delivery at fixed price with committed impression volume (non-auctioned)"
+  }
+}

@@ -1,0 +1,93 @@
+---
+title: get_deals
+sidebarTitle: get_deals
+description: List and filter deals
+testable: true
+---
+
+Retrieve deal status and details. Supports filtering by deal IDs, buyer references, status, and platform. This is the curation equivalent of [`get_media_buys`](/docs/media-buy/task-reference/get_media_buys).
+
+**Response time**: < 10s | **Schema**: [`get-deals-request`](/schemas/latest/curation/get-deals-request.json) / [`get-deals-response`](/schemas/latest/curation/get-deals-response.json)
+
+## Quick start
+
+<CodeGroup>
+```javascript JavaScript
+// Get a specific deal
+const result = await agent.getDeals({
+  deal_ids: ["deal_abc123"]
+});
+
+// List all active deals on Magnite
+const active = await agent.getDeals({
+  status_filter: "active",
+  platform_id: "magnite"
+});
+
+for (const deal of active.deals) {
+  console.log(`${deal.deal_id}: ${deal.status} on ${deal.platform.platform_name}`);
+}
+```
+
+```python Python
+result = agent.get_deals(
+    status_filter=["active", "paused"],
+    platform_id="magnite"
+)
+```
+</CodeGroup>
+
+## Request fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `deal_ids` | string[] | No | Specific deal IDs to retrieve |
+| `buyer_refs` | string[] | No | Filter by buyer references |
+| `status_filter` | string \| string[] | No | Filter by status. Defaults to `["active"]` when no IDs provided |
+| `platform_id` | string | No | Filter by SSP platform |
+| `account` | AccountRef | No | Filter by account |
+| `pagination` | object | No | Cursor-based pagination |
+
+## Response fields
+
+| Field | Type | Always present | Description |
+|-------|------|---------------|-------------|
+| `deals` | Deal[] | Yes | Matching deals with full state |
+| `errors` | Error[] | No | Warnings or errors |
+| `pagination` | object | No | Pagination metadata |
+
+## Example response
+
+```json
+{
+  "$schema": "/schemas/latest/curation/get-deals-response.json",
+  "deals": [
+    {
+      "deal_id": "deal_abc123",
+      "buyer_ref": "acme_sports_q2_magnite",
+      "status": "active",
+      "deal_type": "curated",
+      "segments": [
+        { "segment_id": "seg_sports_ctv_us", "name": "Sports CTV — US premium" }
+      ],
+      "platform": {
+        "platform_id": "magnite",
+        "platform_name": "Magnite",
+        "ssp_deal_id": "MG-756032-001"
+      },
+      "dsps": [
+        { "dsp_id": 2249, "dsp_name": "DV360", "seat_id": "756032", "status": "active" }
+      ],
+      "pricing": {
+        "pricing_model": "cpm",
+        "currency": "USD",
+        "floor_price": 12.00
+      },
+      "start_time": "2026-04-01T00:00:00Z",
+      "end_time": "2026-06-30T23:59:59Z",
+      "created_at": "2026-03-15T10:30:00Z",
+      "updated_at": "2026-03-15T10:31:45Z"
+    }
+  ]
+}
+```

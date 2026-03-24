@@ -1,0 +1,149 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/schemas/curation/get-segments-response.json",
+  "title": "Get Segments Response",
+  "description": "Response payload for get_segments task. Returns matching segments and optional curator-suggested deal proposals.",
+  "type": "object",
+  "properties": {
+    "segments": {
+      "type": "array",
+      "description": "Array of matching segments",
+      "items": {
+        "$ref": "/schemas/core/segment.json"
+      }
+    },
+    "proposals": {
+      "type": "array",
+      "description": "Optional curator-suggested deal packages with segment allocations. Proposals are actionable — buyers can refine them via follow-up get_segments calls, or execute them directly via create_deal with proposal_id.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "proposal_id": {
+            "type": "string",
+            "description": "Unique identifier for this proposal"
+          },
+          "name": {
+            "type": "string",
+            "description": "Human-readable proposal name"
+          },
+          "description": {
+            "type": "string",
+            "description": "Explanation of why this package is recommended"
+          },
+          "segments": {
+            "type": "array",
+            "description": "Segment allocations within this proposal",
+            "items": {
+              "type": "object",
+              "properties": {
+                "segment_id": {
+                  "type": "string",
+                  "description": "Segment identifier"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Segment name"
+                },
+                "allocation_pct": {
+                  "type": "number",
+                  "description": "Percentage of total budget allocated to this segment (0-100)",
+                  "minimum": 0,
+                  "maximum": 100
+                }
+              },
+              "required": ["segment_id"],
+              "additionalProperties": false
+            },
+            "minItems": 1
+          },
+          "suggested_budget": {
+            "type": "object",
+            "description": "Curator's recommended total budget for this proposal",
+            "properties": {
+              "amount": {
+                "type": "number",
+                "description": "Suggested budget amount",
+                "minimum": 0
+              },
+              "currency": {
+                "type": "string",
+                "description": "ISO 4217 currency code",
+                "pattern": "^[A-Z]{3}$"
+              }
+            },
+            "required": ["amount", "currency"],
+            "additionalProperties": false
+          },
+          "suggested_platform": {
+            "type": "string",
+            "description": "Recommended SSP platform ID for this proposal"
+          },
+          "deal_type": {
+            "$ref": "/schemas/enums/deal-type.json",
+            "description": "Recommended deal type for this proposal"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Expiration timestamp for this proposal. After this time, the proposal may no longer be valid for create_deal."
+          }
+        },
+        "required": ["proposal_id", "name", "segments"],
+        "additionalProperties": true
+      }
+    },
+    "refinement_applied": {
+      "type": "array",
+      "description": "Curator's response to each change request in the refine array, matched by position. Only present when the request used buying_mode: 'refine'.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "scope": {
+            "type": "string",
+            "enum": ["request", "segment"],
+            "description": "Echoes the scope from the corresponding refine entry."
+          },
+          "id": {
+            "type": "string",
+            "description": "Echoes the id from the corresponding refine entry (for segment scope)."
+          },
+          "status": {
+            "type": "string",
+            "enum": ["applied", "partial", "unable"],
+            "description": "'applied': the ask was fulfilled. 'partial': partially fulfilled — see notes. 'unable': could not fulfill — see notes."
+          },
+          "notes": {
+            "type": "string",
+            "description": "Curator explanation of what was done, what couldn't be done, or why."
+          }
+        },
+        "required": ["status"],
+        "additionalProperties": false
+      }
+    },
+    "errors": {
+      "type": "array",
+      "description": "Task-specific errors and warnings",
+      "items": {
+        "$ref": "/schemas/core/error.json"
+      }
+    },
+    "pagination": {
+      "$ref": "/schemas/core/pagination-response.json"
+    },
+    "sandbox": {
+      "type": "boolean",
+      "description": "When true, this response contains simulated data from sandbox mode."
+    },
+    "context": {
+      "$ref": "/schemas/core/context.json"
+    },
+    "ext": {
+      "$ref": "/schemas/core/ext.json"
+    }
+  },
+  "required": [
+    "segments"
+  ],
+  "additionalProperties": true
+}

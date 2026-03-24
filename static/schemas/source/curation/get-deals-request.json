@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/schemas/curation/get-deals-request.json",
+  "title": "Get Deals Request",
+  "description": "Request parameters for retrieving deal status and details. Supports filtering by deal IDs, buyer references, status, and platform.",
+  "type": "object",
+  "properties": {
+    "account": {
+      "$ref": "/schemas/core/account-ref.json",
+      "description": "Account to retrieve deals for. When omitted, returns data across all accessible accounts."
+    },
+    "deal_ids": {
+      "type": "array",
+      "description": "Array of protocol-level deal IDs to retrieve. When omitted along with buyer_refs, returns a paginated set of accessible deals matching status_filter.",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "buyer_refs": {
+      "type": "array",
+      "description": "Array of buyer reference IDs to retrieve",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "status_filter": {
+      "oneOf": [
+        {
+          "$ref": "/schemas/enums/deal-status.json"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "/schemas/enums/deal-status.json"
+          },
+          "minItems": 1
+        }
+      ],
+      "description": "Filter by status. Can be a single status or array of statuses. Defaults to ['active'] only when deal_ids and buyer_refs are both omitted."
+    },
+    "platform_id": {
+      "type": "string",
+      "description": "Filter to deals on a specific SSP platform"
+    },
+    "pagination": {
+      "$ref": "/schemas/core/pagination-request.json",
+      "description": "Cursor-based pagination controls."
+    },
+    "context": {
+      "$ref": "/schemas/core/context.json"
+    },
+    "ext": {
+      "$ref": "/schemas/core/ext.json"
+    }
+  },
+  "additionalProperties": true
+}

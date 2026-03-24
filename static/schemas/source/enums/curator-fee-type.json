@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/schemas/enums/curator-fee-type.json",
+  "title": "Curator Fee Type",
+  "description": "How the curator's margin is structured. Aligned with IAB Deals API v1.0 fee transparency fields.",
+  "type": "string",
+  "enum": [
+    "percentage",
+    "flat_cpm"
+  ],
+  "enumDescriptions": {
+    "percentage": "Curator takes a percentage of the buyer's bid (e.g., 20% of $5.00 CPM = $1.00 curator fee, $4.00 to publisher auction)",
+    "flat_cpm": "Curator charges a fixed CPM on top of media cost (e.g., $0.50 flat fee per thousand impressions regardless of bid amount)"
+  }
+}

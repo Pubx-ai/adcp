@@ -1,0 +1,124 @@
+---
+title: Segment discovery
+sidebarTitle: Overview
+description: Discover curated audience segments using briefs, catalog browsing, or refinement
+---
+
+Segment discovery is the entry point for the curation workflow. The `get_segments` task supports three buying modes, mirroring the `get_products` pattern in media buy.
+
+## Buying modes
+
+### Brief mode
+
+Describe your desired audience in natural language. The curator ranks and returns segments matching your brief.
+
+```json
+{
+  "buying_mode": "brief",
+  "brief": "Premium sports video inventory in the US for an automotive brand, Q2 campaign",
+  "filters": {
+    "countries": ["US"],
+    "ad_format_types": ["video"],
+    "min_daily_impressions": 100000
+  }
+}
+```
+
+### Catalog mode
+
+Browse the curator's segment catalog with structured filters. No natural language — just filter parameters.
+
+```json
+{
+  "buying_mode": "catalog",
+  "filters": {
+    "categories": ["sports", "automotive"],
+    "countries": ["US", "GB"],
+    "devices": ["desktop", "mobile", "ctv"],
+    "max_floor_cpm": 8.00
+  }
+}
+```
+
+### Refine mode
+
+Iterate on segments from a previous response. Include, omit, or find similar segments.
+
+```json
+{
+  "buying_mode": "refine",
+  "refine": [
+    {
+      "scope": "segment",
+      "id": "seg_sports_us_premium",
+      "action": "include",
+      "ask": "Show CTV-only coverage for this segment"
+    },
+    {
+      "scope": "segment",
+      "id": "seg_news_generic",
+      "action": "omit"
+    },
+    {
+      "scope": "segment",
+      "id": "seg_auto_intenders",
+      "action": "more_like_this",
+      "ask": "Similar audience but in UK market"
+    }
+  ]
+}
+```
+
+## Filters
+
+All buying modes support optional filters:
+
+| Filter | Type | Description |
+|--------|------|-------------|
+| `countries` | string[] | ISO 3166-1 alpha-2 codes (e.g., `["US", "GB"]`) |
+| `devices` | string[] | `desktop`, `mobile`, `tablet`, `ctv` |
+| `ad_format_types` | string[] | `banner`, `video`, `native`, `audio` |
+| `platforms` | string[] | SSP platform IDs from `list_platforms` |
+| `categories` | string[] | Category labels (e.g., `["sports", "luxury"]`) |
+| `min_daily_impressions` | number | Minimum estimated daily impressions |
+| `max_floor_cpm` | number | Maximum acceptable floor CPM |
+
+## Proposals
+
+The curator MAY return `proposals` — pre-packaged deal configurations with segment allocations and budget guidance. Proposals can be executed directly via `create_deal` using the `proposal_id`.
+
+```json
+{
+  "segments": [ ... ],
+  "proposals": [
+    {
+      "proposal_id": "prop_sports_premium_q2",
+      "name": "Premium sports package — US video",
+      "description": "High-reach sports segments across CTV and mobile video",
+      "segments": [
+        { "segment_id": "seg_sports_ctv", "name": "Sports CTV viewers", "allocation_pct": 60 },
+        { "segment_id": "seg_sports_mobile", "name": "Sports mobile video", "allocation_pct": 40 }
+      ],
+      "suggested_budget": { "amount": 50000, "currency": "USD" },
+      "suggested_platform": "magnite",
+      "deal_type": "curated",
+      "expires_at": "2026-04-15T00:00:00Z"
+    }
+  ]
+}
+```
+
+To execute a proposal:
+
+```json
+{
+  "proposal_id": "prop_sports_premium_q2",
+  "total_budget": { "amount": 40000, "currency": "USD" },
+  "platform_id": "magnite",
+  "dsps": [{ "dsp_id": 2249, "dsp_name": "DV360", "seat_id": "756032" }],
+  "pricing": { "pricing_model": "cpm", "currency": "USD", "floor_price": 6.50 },
+  "start_time": "2026-04-01T00:00:00Z",
+  "end_time": "2026-06-30T23:59:59Z",
+  "buyer_ref": "acme_sports_q2_magnite"
+}
+```

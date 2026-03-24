@@ -1,0 +1,78 @@
+---
+title: update_deal
+sidebarTitle: update_deal
+description: Update deal pricing, dates, or status
+testable: true
+---
+
+Update a deal using PATCH semantics — only send fields to change. Mutable fields include pricing, dates, and pause/resume status. Deal type, buyer seats, and platform are immutable after creation.
+
+**Response time**: < 30s or async | **Schema**: [`update-deal-request`](/schemas/latest/curation/update-deal-request.json) / [`update-deal-response`](/schemas/latest/curation/update-deal-response.json)
+
+## Quick start
+
+<CodeGroup>
+```javascript JavaScript
+// Pause a deal
+const result = await agent.updateDeal({
+  deal_id: "deal_abc123",
+  paused: true
+});
+
+// Adjust floor price mid-flight
+const updated = await agent.updateDeal({
+  deal_id: "deal_abc123",
+  pricing: {
+    pricing_model: "cpm",
+    currency: "USD",
+    floor_price: 10.00
+  }
+});
+
+if (updated.errors) {
+  throw new Error(`Update failed: ${JSON.stringify(updated.errors)}`);
+} else {
+  console.log(`Deal ${updated.deal.deal_id} updated to status: ${updated.deal.status}`);
+}
+```
+
+```python Python
+result = agent.update_deal(
+    deal_id="deal_abc123",
+    paused=True
+)
+```
+</CodeGroup>
+
+## Mutable vs immutable fields
+
+| Mutable (can change) | Immutable (write-once) |
+|---------------------|----------------------|
+| `pricing` (floor_price, fixed_price) | `deal_type` |
+| `curator_fee` | `platform_id` |
+| `start_time`, `end_time` | `dsps[].seat_id` |
+| `paused` (pause/resume) | `segment_ids` |
+
+## Request fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `deal_id` | string | One of deal_id/buyer_ref | Deal to update |
+| `buyer_ref` | string | One of deal_id/buyer_ref | Alternative lookup |
+| `pricing` | DealPricing | No | Updated CPM pricing |
+| `curator_fee` | object | No | Updated curator fee |
+| `start_time` | datetime | No | Updated start date/time |
+| `end_time` | datetime | No | Updated end date/time |
+| `paused` | boolean | No | Pause (true) or resume (false) |
+
+## Response
+
+Returns the updated deal object on success, or errors on failure.
+
+## Error codes
+
+| Code | Recovery | When |
+|------|----------|------|
+| `DEAL_NOT_FOUND` | correctable | Deal ID doesn't exist |
+| `INVALID_DEAL_STATE` | correctable | Can't update a completed/failed deal |
+| `INVALID_REQUEST` | correctable | Invalid pricing or date values |
