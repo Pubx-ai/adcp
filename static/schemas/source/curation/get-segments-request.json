@@ -131,7 +131,7 @@
     },
     "account": {
       "$ref": "/schemas/core/account-ref.json",
-      "description": "Account for segment lookup. Returns segments with pricing specific to this account's rate card."
+      "description": "Buyer's account with the curator. When provided, returns segments with account-specific pricing."
     },
     "fields": {
       "type": "array",

@@ -16,7 +16,7 @@
     },
     "account": {
       "$ref": "/schemas/core/account-ref.json",
-      "description": "Account to bill for this deal."
+      "description": "Buyer's account with the curator. Used for request deduplication (buyer_ref + account) and pricing lookup."
     },
     "brand": {
       "$ref": "/schemas/core/brand-ref.json",

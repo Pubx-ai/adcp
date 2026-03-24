@@ -76,7 +76,7 @@ Two mutually exclusive modes:
 | `start_time` | datetime | Yes | Flight start |
 | `end_time` | datetime | No | Flight end |
 | `buyer_campaign_ref` | string | No | Campaign label |
-| `account` | AccountRef | No | Billing account |
+| `account` | AccountRef | No | Buyer's account with the curator |
 | `brand` | BrandRef | No | Brand reference |
 | `push_notification_config` | object | No | Webhook for async status |
 
@@ -140,5 +140,7 @@ Two mutually exclusive modes:
 | `PLATFORM_NOT_SUPPORTED` | correctable | SSP not supported for these segments |
 | `DSP_NOT_SUPPORTED` | correctable | DSP not available on this SSP |
 | `ACTIVATION_FAILED` | transient | SSP activation error |
-| `INVALID_REQUEST` | correctable | Missing required fields or invalid pricing |
-| `BUDGET_TOO_LOW` | correctable | Budget below minimum |
+| `INVALID_PRICING` | correctable | Pricing invalid for platform or deal type |
+| `INVALID_DATES` | correctable | Invalid or out-of-range date values |
+| `BUDGET_EXCEEDED` | correctable | Exceeds authorized budget |
+| `INVALID_REQUEST` | correctable | Missing required fields |

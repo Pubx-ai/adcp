@@ -37,7 +37,9 @@
     "PLATFORM_NOT_SUPPORTED",
     "DSP_NOT_SUPPORTED",
     "ACTIVATION_FAILED",
-    "INVALID_DEAL_STATE"
+    "INVALID_DEAL_STATE",
+    "INVALID_PRICING",
+    "INVALID_DATES"
   ],
   "enumDescriptions": {
     "INVALID_REQUEST": "Request is malformed, missing required fields, or violates schema constraints. Recovery: correctable (check request parameters and fix).",
@@ -72,6 +74,8 @@
     "PLATFORM_NOT_SUPPORTED": "The specified SSP platform is not supported by this curator or for the requested segments. Recovery: correctable (check list_platforms for available platforms).",
     "DSP_NOT_SUPPORTED": "One or more specified DSPs are not available on the target SSP platform. Recovery: correctable (check list_platforms for supported DSP integrations).",
     "ACTIVATION_FAILED": "Deal activation failed on the SSP platform. Recovery: transient (may be retried) or correctable (check error details for SSP-specific requirements).",
-    "INVALID_DEAL_STATE": "The requested operation is not allowed for the deal's current status. Recovery: correctable (check deal status via get_deals before retrying)."
+    "INVALID_DEAL_STATE": "The requested operation is not allowed for the deal's current status. Recovery: correctable (check deal status via get_deals before retrying).",
+    "INVALID_PRICING": "Pricing configuration is invalid for the target platform or deal type. Recovery: correctable (check platform requirements via list_platforms and adjust pricing).",
+    "INVALID_DATES": "Date range is invalid, out of order, or in the past. Recovery: correctable (verify start_time is before end_time and both are in the future)."
   }
 }
