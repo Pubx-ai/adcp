@@ -1,17 +1,12 @@
 ---
-title: Specification
-sidebarTitle: Specification
-description: Formal specification for the Curation Protocol
+title: "Specification"
+sidebarTitle: "Specification"
+description: "Formal specification for the Curation Protocol"
 ---
 
 <Info>
-**AdCP 3.0 Proposal** - This specification is under development for AdCP 3.0. Feedback welcome via [GitHub Discussions](https://github.com/adcontextprotocol/adcp/discussions).
+  **AdCP 3.0 Proposal** - This specification is under development for AdCP 3.0. Feedback welcome via [GitHub Discussions](https://github.com/adcontextprotocol/adcp/discussions).
 </Info>
-
-**Status**: Request for Comments
-**Last Updated**: March 2026
-
-This document defines the Curation Protocol for the Ad Context Protocol (AdCP). The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119).
 
 ## Abstract
 
@@ -20,6 +15,7 @@ The Curation Protocol enables programmatic discovery of curated audience segment
 ## Transport
 
 Curator agents MUST support at least one of:
+
 - **MCP** (Model Context Protocol) — preferred for AI agent integrations
 - **A2A** (Agent-to-Agent JSON-RPC) — for server-to-server communication
 
@@ -46,7 +42,7 @@ The Supply-Side Platform where deals are activated (e.g., Magnite, PubMatic, Ind
 ## Identifiers
 
 | Identifier | Scope | Who provides | Purpose |
-|-----------|-------|-------------|---------|
+| --- | --- | --- | --- |
 | `deal_id` | Protocol | Curator | Used in all protocol calls (`get_deals`, `update_deal`, etc.) |
 | `buyer_ref` | Protocol | Buyer | Idempotency key, deduplicated per account |
 | `ssp_deal_id` | SSP | SSP | Generated on activation, used by buyer in DSP |
@@ -60,30 +56,30 @@ The Supply-Side Platform where deals are activated (e.g., Magnite, PubMatic, Ind
 Curator agents MUST implement:
 
 | Task | Purpose | Expected response time |
-|------|---------|----------------------|
-| `get_segments` | Discover audience segments | < 30s |
-| `list_platforms` | List SSP platform capabilities | < 5s |
-| `create_deal` | Activate deal on SSP | < 120s or async |
-| `get_deals` | List and filter deals | < 10s |
+| --- | --- | --- |
+| `get_segments` | Discover audience segments | \< 30s |
+| `list_platforms` | List SSP platform capabilities | \< 5s |
+| `create_deal` | Activate deal on SSP | \< 120s or async |
+| `get_deals` | List and filter deals | \< 10s |
 
 ### Optional tasks
 
 Curator agents SHOULD implement:
 
 | Task | Purpose | Expected response time |
-|------|---------|----------------------|
-| `update_deal` | Modify deal pricing, dates, or status | < 30s or async |
-| `get_deal_delivery` | Retrieve delivery metrics | < 15s |
+| --- | --- | --- |
+| `update_deal` | Modify deal pricing, dates, or status | \< 30s or async |
+| `get_deal_delivery` | Retrieve delivery metrics | \< 15s |
 
 Curator agents MAY implement:
 
 | Task | Purpose | Expected response time |
-|------|---------|----------------------|
-| `provide_deal_performance_feedback` | Receive buyer performance data | < 5s |
+| --- | --- | --- |
+| `provide_deal_performance_feedback` | Receive buyer performance data | \< 5s |
 
 ## Deal status lifecycle
 
-```
+```text
                     ┌──────────────┐
                     │   rejected   │
                     └──────────────┘
@@ -117,7 +113,7 @@ When `push_notification_config` is provided, the curator SHOULD send webhooks on
 Curation-specific error codes in addition to standard AdCP codes:
 
 | Code | Recovery | When |
-|------|----------|------|
+| --- | --- | --- |
 | `SEGMENT_NOT_FOUND` | correctable | Referenced segment ID is unknown or expired |
 | `DEAL_NOT_FOUND` | correctable | Referenced deal ID is unknown |
 | `PLATFORM_NOT_SUPPORTED` | correctable | SSP platform not supported for these segments |
@@ -137,6 +133,6 @@ SSP deals are CPM-based. The `deal-pricing` schema supports:
 Curators MAY disclose their margin via the `curator_fee` field on deal responses:
 
 - `fee_type: "percentage"` — Percentage of the buyer's bid (e.g., 20%)
-- `fee_type: "flat_cpm"` — Fixed CPM fee (e.g., $0.50)
+- `fee_type: "flat_cpm"` — Fixed CPM fee (e.g., \$0.50)
 
 Disclosure capability is declared in `get_adcp_capabilities` via `curator_fee_disclosure: true`.
