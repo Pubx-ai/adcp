@@ -1,0 +1,142 @@
+---
+title: "Specification"
+sidebarTitle: "Specification"
+description: "Formal specification for the Curation Protocol"
+---
+
+<Info>
+  **AdCP 3.0 Proposal** - This specification is under development for AdCP 3.0. Feedback welcome via [GitHub Discussions](https://github.com/adcontextprotocol/adcp/discussions).
+</Info>
+
+## Abstract
+
+The Curation Protocol enables programmatic discovery of curated audience segments and activation of deals on Supply-Side Platforms (SSPs). A curator agent manages a catalog of audience segments defined by targeting rules (geographic, contextual, behavioral, device) and activates them as deals on SSPs where buyers can bid through their DSPs.
+
+## Transport
+
+Curator agents MUST support at least one of:
+
+- **MCP** (Model Context Protocol) — preferred for AI agent integrations
+- **A2A** (Agent-to-Agent JSON-RPC) — for server-to-server communication
+
+Curator agents MUST declare `"curation"` in the `supported_protocols` array of `get_adcp_capabilities`.
+
+## Core concepts
+
+### Curator agent
+
+The curator agent is the seller-side agent that manages a catalog of audience segments and handles deal activation on SSP platforms. In AdCP terms, the curator is the "seller" for the curation protocol.
+
+### Segment
+
+The atomic unit of curated inventory. A segment defines a targetable audience or context through rules managed internally by the curator. Segments are **discovered** through the protocol (via `get_segments`), not created by buyers.
+
+### Deal
+
+The transactional entity representing a deal on an SSP platform. A deal is created from one or more segments and has a lifecycle managed through the protocol. Each deal maps 1:1 to an SSP deal — multi-platform activation requires separate deals.
+
+### SSP platform
+
+The Supply-Side Platform where deals are activated (e.g., Magnite, PubMatic, Index Exchange). Each SSP has its own deal types, ad format support, and DSP integrations. DSP-SSP integration is a property of the SSP infrastructure, not of individual deals.
+
+## Identifiers
+
+| Identifier | Scope | Who provides | Purpose |
+| --- | --- | --- | --- |
+| `deal_id` | Protocol | Curator | Used in all protocol calls (`get_deals`, `update_deal`, etc.) |
+| `buyer_ref` | Protocol | Buyer | Idempotency key, deduplicated per account |
+| `ssp_deal_id` | SSP | SSP | Generated on activation, used by buyer in DSP |
+| `seat_id` | SSP-DSP | Buyer | Buyer's identity on the SSP for a specific DSP |
+| `segment_id` | Protocol | Curator | Identifies segments in the catalog |
+
+## Tasks
+
+### Required tasks
+
+Curator agents MUST implement:
+
+| Task | Purpose | Expected response time |
+| --- | --- | --- |
+| `get_segments` | Discover audience segments | ≤ 120s |
+| `list_platforms` | List SSP platform capabilities | \< 5s |
+| `create_deal` | Activate deal on SSP | \< 120s or async |
+| `get_deals` | List and filter deals | \< 10s |
+
+### Optional tasks
+
+Curator agents SHOULD implement:
+
+| Task | Purpose | Expected response time |
+| --- | --- | --- |
+| `update_deal` | Modify deal pricing, dates, or status | \< 30s or async |
+| `get_deal_delivery` | Retrieve delivery metrics | \< 30s |
+
+Curator agents MAY implement:
+
+| Task | Purpose | Expected response time |
+| --- | --- | --- |
+| `provide_deal_performance_feedback` | Receive buyer performance data | \< 30s |
+
+## Deal status lifecycle
+
+```mermaid
+flowchart LR
+    created["created<br/>(internal)"] --> pending_approval["pending_approval"]
+    pending_approval -->|"approved"| pending_activation["pending_activation"]
+    pending_approval -->|"curator/SSP rejects"| rejected["rejected"]
+    pending_activation -->|"SSP activates"| active["active"]
+    pending_activation -->|"SSP fails"| failed["failed"]
+    active -->|"pause"| paused["paused"]
+    paused -->|"resume"| active
+    active -->|"flight ends"| completed["completed"]
+    active -->|"buyer cancels"| canceled["canceled"]
+
+    style rejected fill:#dc2626,color:#fff,stroke:#dc2626
+    style failed fill:#dc2626,color:#fff,stroke:#dc2626
+    style active fill:#047857,color:#fff,stroke:#047857
+    style completed fill:#2563eb,color:#fff,stroke:#2563eb
+    style canceled fill:#d97706,color:#fff,stroke:#d97706
+    style paused fill:#d97706,color:#fff,stroke:#d97706
+```
+
+## Async operations
+
+Deal creation MAY be asynchronous. The curator MUST return one of:
+
+- **`completed`** — Deal created and activated immediately
+- **`working`** — Activation in progress, expected within 120 seconds
+- **`submitted`** — Requires longer processing or human approval
+
+When `push_notification_config` is provided, the curator SHOULD send webhooks on status changes.
+
+## Error codes
+
+Curation-specific error codes in addition to standard AdCP codes:
+
+| Code | Recovery | When |
+| --- | --- | --- |
+| `SEGMENT_NOT_FOUND` | correctable | Referenced segment ID is unknown or expired |
+| `DEAL_NOT_FOUND` | correctable | Referenced deal ID is unknown |
+| `PLATFORM_NOT_SUPPORTED` | correctable | SSP platform not supported for these segments |
+| `DSP_NOT_SUPPORTED` | correctable | DSP not available on the target SSP |
+| `ACTIVATION_FAILED` | transient/correctable | SSP activation error |
+| `INVALID_DEAL_STATE` | correctable | Operation not allowed for current deal status |
+| `INVALID_PRICING` | correctable | Pricing invalid for the platform or deal type |
+| `INVALID_DATES` | correctable | Invalid or out-of-range date values |
+| `BUDGET_EXCEEDED` | correctable | Exceeds authorized budget |
+
+## Pricing
+
+SSP deals are CPM-based. The `deal-pricing` schema supports:
+
+- **`floor_price`** — Minimum CPM for auction-based deals (curated, PMP). First-price auction clearing.
+- **`fixed_price`** — Exact CPM for programmatic guaranteed or preferred deals.
+
+### Curator fee transparency
+
+Curators MAY disclose their margin via the `curator_fee` field on deal responses:
+
+- `fee_type: "percentage"` — Percentage of the buyer's bid (e.g., 20%)
+- `fee_type: "flat_cpm"` — Fixed CPM fee (e.g., \$0.50)
+
+Disclosure capability is declared in `get_adcp_capabilities` via `curator_fee_disclosure: true`.

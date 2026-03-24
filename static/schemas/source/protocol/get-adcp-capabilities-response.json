@@ -34,7 +34,8 @@
           "governance",
           "sponsored_intelligence",
           "creative",
-          "brand"
+          "brand",
+          "curation"
         ]
       },
       "minItems": 1
@@ -808,6 +809,51 @@
         }
       },
       "additionalProperties": true
+    },
+    "curation": {
+      "type": "object",
+      "description": "Curation protocol capabilities. Only present if curation is in supported_protocols. Curation agents manage curated audience segments and activate deals on SSP platforms.",
+      "properties": {
+        "supported_platforms": {
+          "type": "array",
+          "description": "SSP platforms this curator can activate deals on. Each platform has its own deal types, ad format support, and DSP integrations.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "platform_id": {
+                "type": "string",
+                "description": "Unique identifier for the SSP platform"
+              },
+              "platform_name": {
+                "type": "string",
+                "description": "Human-readable name (e.g., 'Magnite', 'PubMatic')"
+              }
+            },
+            "required": ["platform_id", "platform_name"]
+          },
+          "minItems": 1
+        },
+        "supported_deal_types": {
+          "type": "array",
+          "description": "Deal types this curator supports across its platform portfolio",
+          "items": {
+            "$ref": "/schemas/enums/deal-type.json"
+          },
+          "minItems": 1
+        },
+        "supported_ad_format_types": {
+          "type": "array",
+          "description": "Ad format types available across the curator's segment catalog",
+          "items": {
+            "$ref": "/schemas/enums/ssp-ad-format-type.json"
+          },
+          "minItems": 1
+        },
+        "curator_fee_disclosure": {
+          "type": "boolean",
+          "description": "Whether this curator discloses fee structure (fee_type, fee_amount) in deal responses. When true, create_deal and get_deals responses include curator_fee details."
+        }
+      }
     },
     "extensions_supported": {
       "type": "array",

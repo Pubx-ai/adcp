@@ -1,0 +1,81 @@
+---
+title: list_platforms
+sidebarTitle: list_platforms
+description: List available SSP platforms and their capabilities
+testable: true
+---
+
+Returns SSP platforms the curator can activate deals on, with supported deal types, ad formats, and DSP integrations. This is the curation equivalent of [`list_creative_formats`](/docs/media-buy/task-reference/list_creative_formats).
+
+**Response time**: < 5s | **Schema**: [`list-platforms-request`](https://adcontextprotocol.org/schemas/latest/curation/list-platforms-request.json) / [`list-platforms-response`](https://adcontextprotocol.org/schemas/latest/curation/list-platforms-response.json)
+
+## Quick start
+
+<CodeGroup>
+```javascript JavaScript
+const result = await agent.listPlatforms({
+  ad_format_types: ["video"],
+  deal_types: ["curated"]
+});
+
+for (const platform of result.platforms) {
+  console.log(`${platform.platform_name}: ${platform.supported_dsps?.map(d => d.dsp_name).join(', ')}`);
+}
+```
+
+```python Python
+result = agent.list_platforms(
+    ad_format_types=["video"],
+    deal_types=["curated"]
+)
+```
+</CodeGroup>
+
+## Request fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `ad_format_types` | string[] | No | Filter by supported ad formats |
+| `deal_types` | string[] | No | Filter by supported deal types |
+
+## Response fields
+
+| Field | Type | Always present | Description |
+|-------|------|---------------|-------------|
+| `platforms` | Platform[] | Yes | Available SSP platforms |
+| `platforms[].platform_id` | string | Yes | Platform identifier |
+| `platforms[].platform_name` | string | Yes | Human-readable name |
+| `platforms[].supported_deal_types` | string[] | Yes | curated, pmp, preferred_deal, programmatic_guaranteed |
+| `platforms[].supported_ad_format_types` | string[] | Yes | banner, video, native, audio |
+| `platforms[].supported_dsps` | object[] | No | DSP integrations with dsp_id and dsp_name |
+
+## Example response
+
+```json
+{
+  "$schema": "/schemas/latest/curation/list-platforms-response.json",
+  "platforms": [
+    {
+      "platform_id": "magnite",
+      "platform_name": "Magnite",
+      "supported_deal_types": ["curated", "pmp", "programmatic_guaranteed"],
+      "supported_ad_format_types": ["banner", "video", "native", "audio"],
+      "supported_dsps": [
+        { "dsp_id": 2249, "dsp_name": "DV360" },
+        { "dsp_id": 1089, "dsp_name": "The Trade Desk" },
+        { "dsp_id": 3401, "dsp_name": "Amazon DSP" }
+      ]
+    },
+    {
+      "platform_id": "pubmatic",
+      "platform_name": "PubMatic",
+      "supported_deal_types": ["curated", "pmp", "preferred_deal"],
+      "supported_ad_format_types": ["banner", "video", "native"],
+      "supported_dsps": [
+        { "dsp_id": 2249, "dsp_name": "DV360" },
+        { "dsp_id": 1089, "dsp_name": "The Trade Desk" }
+      ]
+    }
+  ]
+}
+```

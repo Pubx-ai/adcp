@@ -1,0 +1,94 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/schemas/curation/list-platforms-response.json",
+  "title": "List Platforms Response",
+  "description": "Response payload for list_platforms task. Returns SSP platforms available for deal activation with their capabilities and DSP integrations.",
+  "type": "object",
+  "properties": {
+    "platforms": {
+      "type": "array",
+      "description": "Array of available SSP platforms",
+      "items": {
+        "type": "object",
+        "properties": {
+          "platform_id": {
+            "type": "string",
+            "description": "Unique identifier for the SSP platform"
+          },
+          "platform_name": {
+            "type": "string",
+            "description": "Human-readable SSP name (e.g., 'Magnite', 'PubMatic', 'Index Exchange')"
+          },
+          "supported_deal_types": {
+            "type": "array",
+            "description": "Deal types available on this platform",
+            "items": {
+              "$ref": "/schemas/enums/deal-type.json"
+            },
+            "minItems": 1
+          },
+          "supported_ad_format_types": {
+            "type": "array",
+            "description": "Ad format types available on this platform",
+            "items": {
+              "$ref": "/schemas/enums/ssp-ad-format-type.json"
+            },
+            "minItems": 1
+          },
+          "supported_dsps": {
+            "type": "array",
+            "description": "DSP integrations available on this platform. DSP-SSP integration is a property of the SSP infrastructure — a deal inherits whichever DSP integrations its host SSP has built.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "dsp_id": {
+                  "oneOf": [
+                    { "type": "integer" },
+                    { "type": "string" }
+                  ],
+                  "description": "DSP identifier"
+                },
+                "dsp_name": {
+                  "type": "string",
+                  "description": "Human-readable DSP name (e.g., 'DV360', 'The Trade Desk', 'Amazon DSP')"
+                }
+              },
+              "required": ["dsp_name"],
+              "additionalProperties": true
+            }
+          },
+          "notes": {
+            "type": "string",
+            "description": "Additional platform-specific information or limitations"
+          },
+          "ext": {
+            "$ref": "/schemas/core/ext.json"
+          }
+        },
+        "required": ["platform_id", "platform_name", "supported_deal_types", "supported_ad_format_types"],
+        "additionalProperties": true
+      }
+    },
+    "errors": {
+      "type": "array",
+      "description": "Task-specific errors and warnings",
+      "items": {
+        "$ref": "/schemas/core/error.json"
+      }
+    },
+    "sandbox": {
+      "type": "boolean",
+      "description": "When true, this response contains simulated data from sandbox mode."
+    },
+    "context": {
+      "$ref": "/schemas/core/context.json"
+    },
+    "ext": {
+      "$ref": "/schemas/core/ext.json"
+    }
+  },
+  "required": [
+    "platforms"
+  ],
+  "additionalProperties": true
+}

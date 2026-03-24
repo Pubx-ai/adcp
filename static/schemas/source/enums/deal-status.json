@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/schemas/enums/deal-status.json",
+  "title": "Deal Status",
+  "description": "Status of a curation deal on an SSP platform.",
+  "type": "string",
+  "enum": [
+    "pending_approval",
+    "pending_activation",
+    "active",
+    "paused",
+    "completed",
+    "failed",
+    "rejected",
+    "canceled"
+  ],
+  "enumDescriptions": {
+    "pending_approval": "Deal created but awaiting curator or SSP approval",
+    "pending_activation": "Deal approved but not yet live on the SSP",
+    "active": "Deal is live and accepting bids",
+    "paused": "Deal is temporarily paused",
+    "completed": "Deal has finished its flight dates",
+    "failed": "Deal activation failed on the SSP",
+    "rejected": "Deal was rejected by the curator or SSP",
+    "canceled": "Deal was canceled by the buyer before completion"
+  }
+}

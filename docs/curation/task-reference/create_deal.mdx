@@ -1,0 +1,146 @@
+---
+title: create_deal
+sidebarTitle: create_deal
+description: Create a deal on an SSP platform
+testable: true
+---
+
+Activate a deal on an SSP platform from selected segments or a proposal. Each call creates one deal on one SSP. For multi-platform activation, make separate calls. This is the curation equivalent of [`create_media_buy`](/docs/media-buy/task-reference/create_media_buy).
+
+**Response time**: < 120s or async | **Schema**: [`create-deal-request`](https://adcontextprotocol.org/schemas/latest/curation/create-deal-request.json) / [`create-deal-response`](https://adcontextprotocol.org/schemas/latest/curation/create-deal-response.json)
+
+## Quick start
+
+<CodeGroup>
+```javascript JavaScript
+const result = await agent.createDeal({
+  buyer_ref: "acme_sports_q2_magnite",
+  segment_ids: ["seg_sports_ctv_us", "seg_auto_intenders_us"],
+  platform_id: "magnite",
+  dsps: [
+    { dsp_id: 2249, dsp_name: "DV360", seat_id: "756032" }
+  ],
+  pricing: {
+    pricing_model: "cpm",
+    currency: "USD",
+    floor_price: 12.00
+  },
+  start_time: "2026-04-01T00:00:00Z",
+  end_time: "2026-06-30T23:59:59Z"
+});
+
+if (result.errors) {
+  throw new Error(`Failed: ${JSON.stringify(result.errors)}`);
+} else {
+  console.log(`Deal ${result.deal_id} created`);
+  console.log(`SSP deal ID: ${result.platform.ssp_deal_id}`);
+  console.log(`Status: ${result.status}`);
+}
+```
+
+```python Python
+result = agent.create_deal(
+    buyer_ref="acme_sports_q2_magnite",
+    segment_ids=["seg_sports_ctv_us", "seg_auto_intenders_us"],
+    platform_id="magnite",
+    dsps=[{"dsp_id": 2249, "dsp_name": "DV360", "seat_id": "756032"}],
+    pricing={"pricing_model": "cpm", "currency": "USD", "floor_price": 12.00},
+    start_time="2026-04-01T00:00:00Z",
+    end_time="2026-06-30T23:59:59Z"
+)
+```
+</CodeGroup>
+
+## Input modes
+
+Two mutually exclusive modes:
+
+| Mode | Required fields | Use case |
+|------|----------------|----------|
+| **Direct** | `segment_ids` | Buyer selects specific segments |
+| **Proposal** | `proposal_id` + `total_budget` | Execute a proposal from `get_segments` |
+
+## Request fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `buyer_ref` | string | Yes | Idempotency key — deduplicates on buyer_ref + account |
+| `segment_ids` | string[] | Direct mode | Selected segment IDs |
+| `proposal_id` | string | Proposal mode | Proposal ID from `get_segments` |
+| `total_budget` | `{ amount, currency }` | Proposal mode | Total budget for the proposal |
+| `platform_id` | string | Yes | SSP platform to activate on |
+| `deal_type` | string | No | Default: `"curated"` |
+| `dsps` | object[] | Yes | DSP configs with `seat_id` (required), `dsp_id`, `dsp_name` |
+| `pricing` | DealPricing | Yes | `{ pricing_model: "cpm", currency, floor_price \| fixed_price }` |
+| `ad_format_types` | string[] | No | Override format types |
+| `start_time` | datetime | Yes | Flight start |
+| `end_time` | datetime | No | Flight end |
+| `buyer_campaign_ref` | string | No | Campaign label |
+| `account` | AccountRef | No | Buyer's account with the curator |
+| `brand` | BrandRef | No | Brand reference |
+| `push_notification_config` | object | No | Webhook for async status |
+
+## Response fields (success)
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `deal_id` | string | Protocol-level deal ID for all subsequent calls |
+| `buyer_ref` | string | Echoed buyer reference |
+| `status` | DealStatus | Typically `pending_activation` or `active` |
+| `platform.ssp_deal_id` | string | SSP-assigned deal ID — use in DSP to target |
+| `dsps[].seat_id` | string | Buyer's seat ID |
+| `dsps[].status` | string | Per-DSP activation status: `pending`, `active`, `failed` |
+| `curator_fee` | object | Fee disclosure (if curator supports it) |
+
+## Example response
+
+```json
+{
+  "$schema": "/schemas/latest/curation/create-deal-response.json",
+  "deal_id": "deal_abc123",
+  "buyer_ref": "acme_sports_q2_magnite",
+  "status": "active",
+  "deal_type": "curated",
+  "platform": {
+    "platform_id": "magnite",
+    "platform_name": "Magnite",
+    "ssp_deal_id": "MG-756032-001"
+  },
+  "dsps": [
+    {
+      "dsp_id": 2249,
+      "dsp_name": "DV360",
+      "seat_id": "756032",
+      "status": "active"
+    }
+  ],
+  "segments": [
+    { "segment_id": "seg_sports_ctv_us", "name": "Sports CTV — US premium" },
+    { "segment_id": "seg_auto_intenders_us", "name": "Auto intenders — US" }
+  ],
+  "pricing": {
+    "pricing_model": "cpm",
+    "currency": "USD",
+    "floor_price": 12.00
+  },
+  "curator_fee": {
+    "fee_type": "percentage",
+    "fee_amount": 15
+  },
+  "start_time": "2026-04-01T00:00:00Z",
+  "end_time": "2026-06-30T23:59:59Z"
+}
+```
+
+## Error codes
+
+| Code | Recovery | When |
+|------|----------|------|
+| `SEGMENT_NOT_FOUND` | correctable | Segment ID doesn't exist |
+| `PLATFORM_NOT_SUPPORTED` | correctable | SSP not supported for these segments |
+| `DSP_NOT_SUPPORTED` | correctable | DSP not available on this SSP |
+| `ACTIVATION_FAILED` | transient | SSP activation error |
+| `INVALID_PRICING` | correctable | Pricing invalid for platform or deal type |
+| `INVALID_DATES` | correctable | Invalid or out-of-range date values |
+| `BUDGET_EXCEEDED` | correctable | Exceeds authorized budget |
+| `INVALID_REQUEST` | correctable | Missing required fields |

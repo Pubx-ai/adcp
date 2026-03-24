@@ -1,0 +1,113 @@
+---
+title: get_segments
+sidebarTitle: get_segments
+description: Discover curated audience segments
+testable: true
+---
+
+Discover curated audience segments using natural language briefs, structured catalog filters, or iterative refinement. This is the curation equivalent of [`get_products`](/docs/media-buy/task-reference/get_products) in the media buy protocol.
+
+**Response time**: < 30s | **Schema**: [`get-segments-request`](https://adcontextprotocol.org/schemas/latest/curation/get-segments-request.json) / [`get-segments-response`](https://adcontextprotocol.org/schemas/latest/curation/get-segments-response.json)
+
+## Quick start
+
+<CodeGroup>
+```javascript JavaScript
+const segments = await agent.getSegments({
+  buying_mode: "brief",
+  brief: "Premium sports video in US for auto brand, Q2 flight",
+  filters: {
+    countries: ["US"],
+    ad_format_types: ["video"]
+  }
+});
+
+if (segments.errors) {
+  throw new Error(`Failed: ${JSON.stringify(segments.errors)}`);
+} else {
+  console.log(`Found ${segments.segments.length} segments`);
+  if (segments.proposals) {
+    console.log(`${segments.proposals.length} proposals available`);
+  }
+}
+```
+
+```python Python
+segments = agent.get_segments(
+    buying_mode="brief",
+    brief="Premium sports video in US for auto brand, Q2 flight",
+    filters={
+        "countries": ["US"],
+        "ad_format_types": ["video"]
+    }
+)
+```
+</CodeGroup>
+
+## Buying modes
+
+| Mode | Required fields | Use case |
+|------|----------------|----------|
+| `brief` | `brief` (string) | Natural language audience description |
+| `catalog` | None (filters optional) | Browse segment catalog with structured filters |
+| `refine` | `refine` (array) | Iterate on previous results |
+
+## Request fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `buying_mode` | `"brief"` \| `"catalog"` \| `"refine"` | Yes | Buyer intent |
+| `brief` | string | Brief mode | Natural language description |
+| `refine` | array | Refine mode | Change requests (scope: request/segment, action: include/omit/more_like_this) |
+| `filters` | object | No | Structured filters (countries, devices, ad_format_types, platforms, categories, min_daily_impressions, max_floor_cpm) |
+| `brand` | BrandRef | No | Brand context for safety/alignment filtering |
+| `account` | AccountRef | No | Buyer's account with the curator |
+| `fields` | string[] | No | Field projection — only return specified fields |
+| `pagination` | object | No | Cursor-based pagination |
+
+## Response fields
+
+| Field | Type | Always present | Description |
+|-------|------|---------------|-------------|
+| `segments` | Segment[] | Yes | Matching segments |
+| `proposals` | object[] | No | Curator-suggested deal packages |
+| `refinement_applied` | object[] | Refine mode only | Status of each refine request |
+| `errors` | Error[] | No | Warnings or errors |
+| `pagination` | object | No | Pagination metadata |
+
+## Example response
+
+```json
+{
+  "$schema": "/schemas/latest/curation/get-segments-response.json",
+  "segments": [
+    {
+      "segment_id": "seg_sports_ctv_us",
+      "name": "Sports CTV — US premium",
+      "description": "Premium sports content viewers on CTV devices across top-tier US publishers",
+      "categories": ["sports", "premium"],
+      "targeting_summary": "CTV viewers of live sports, sports highlights, and sports news in the US",
+      "estimated_daily_impressions": 2500000,
+      "estimated_reach": 800000,
+      "supported_platforms": ["magnite", "pubmatic"],
+      "supported_ad_format_types": ["video"],
+      "countries": ["US"],
+      "devices": ["ctv"],
+      "pricing_guidance": {
+        "floor_cpm": 12.00,
+        "suggested_cpm": 18.00,
+        "currency": "USD"
+      },
+      "status": "active",
+      "brief_relevance": "High-value CTV sports audience matching auto brand targeting for Q2 campaign"
+    }
+  ]
+}
+```
+
+## Error codes
+
+| Code | Recovery | When |
+|------|----------|------|
+| `SEGMENT_NOT_FOUND` | correctable | Segment ID in refine request doesn't exist |
+| `INVALID_REQUEST` | correctable | Missing required fields for buying mode |

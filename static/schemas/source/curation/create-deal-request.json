@@ -1,0 +1,138 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/schemas/curation/create-deal-request.json",
+  "title": "Create Deal Request",
+  "description": "Request parameters for creating a deal on an SSP platform. Supports two modes: (1) Direct mode — provide segment_ids with explicit segment selections, or (2) Proposal mode — provide proposal_id and total_budget to execute a proposal from get_segments. One of segment_ids or proposal_id must be provided. Each call activates on a single SSP platform — for multi-platform activation, make separate calls.",
+  "type": "object",
+  "properties": {
+    "buyer_ref": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Buyer's reference identifier for this deal. Curators SHOULD deduplicate requests with the same buyer_ref and account, returning the existing deal rather than creating a duplicate SSP deal."
+    },
+    "buyer_campaign_ref": {
+      "type": "string",
+      "description": "Buyer's campaign reference label. Groups related discovery and deal operations under a single campaign."
+    },
+    "account": {
+      "$ref": "/schemas/core/account-ref.json",
+      "description": "Buyer's account with the curator. Used for request deduplication (buyer_ref + account) and pricing lookup."
+    },
+    "brand": {
+      "$ref": "/schemas/core/brand-ref.json",
+      "description": "Brand reference for this deal."
+    },
+    "segment_ids": {
+      "type": "array",
+      "description": "Selected segment IDs for direct mode. Segments must be from a previous get_segments response and must support the specified platform.",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "proposal_id": {
+      "type": "string",
+      "description": "ID of a proposal from get_segments to execute. When provided with total_budget, the curator converts the proposal's allocation percentages into segment selections automatically."
+    },
+    "total_budget": {
+      "type": "object",
+      "description": "Total budget for the deal when executing a proposal. The curator applies the proposal's allocation percentages to this amount.",
+      "properties": {
+        "amount": {
+          "type": "number",
+          "description": "Total budget amount",
+          "minimum": 0
+        },
+        "currency": {
+          "type": "string",
+          "description": "ISO 4217 currency code",
+          "pattern": "^[A-Z]{3}$"
+        }
+      },
+      "required": ["amount", "currency"],
+      "additionalProperties": false
+    },
+    "platform_id": {
+      "type": "string",
+      "description": "SSP platform to activate this deal on. Must be a platform_id from list_platforms. One deal per SSP — multi-platform activation requires separate create_deal calls."
+    },
+    "deal_type": {
+      "$ref": "/schemas/enums/deal-type.json",
+      "description": "Type of SSP deal to create. Defaults to 'curated' if omitted. Must be supported by the target platform (check list_platforms)."
+    },
+    "dsps": {
+      "type": "array",
+      "description": "DSP configurations — which DSPs should receive this deal. Each entry must include the buyer's seat_id on the SSP for that DSP.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "dsp_id": {
+            "oneOf": [
+              { "type": "integer" },
+              { "type": "string" }
+            ],
+            "description": "DSP identifier (must match a supported DSP on the target platform)"
+          },
+          "dsp_name": {
+            "type": "string",
+            "description": "Human-readable DSP name"
+          },
+          "seat_id": {
+            "type": "string",
+            "description": "Buyer's seat ID on the SSP for this DSP. This is the buyer's identity on the SSP-DSP integration — the SSP routes the deal to this seat."
+          }
+        },
+        "required": ["seat_id", "dsp_name"],
+        "additionalProperties": true
+      },
+      "minItems": 1
+    },
+    "pricing": {
+      "$ref": "/schemas/core/deal-pricing.json",
+      "description": "CPM pricing for this deal. Use floor_price for curated/PMP deals (auction-based), fixed_price for guaranteed or preferred deals."
+    },
+    "ad_format_types": {
+      "type": "array",
+      "description": "Ad format types for this deal. If omitted, the deal inherits formats from the selected segments.",
+      "items": {
+        "$ref": "/schemas/enums/ssp-ad-format-type.json"
+      },
+      "uniqueItems": true
+    },
+    "start_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Campaign start date/time in ISO 8601 format"
+    },
+    "end_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Campaign end date/time in ISO 8601 format"
+    },
+    "push_notification_config": {
+      "$ref": "/schemas/core/push-notification-config.json",
+      "description": "Optional webhook configuration for async deal activation status notifications. Curator will send webhooks when deal status changes."
+    },
+    "context": {
+      "$ref": "/schemas/core/context.json"
+    },
+    "ext": {
+      "$ref": "/schemas/core/ext.json"
+    }
+  },
+  "required": [
+    "buyer_ref",
+    "platform_id",
+    "dsps",
+    "pricing",
+    "start_time"
+  ],
+  "dependencies": {
+    "proposal_id": ["total_budget"]
+  },
+  "anyOf": [
+    { "required": ["segment_ids"] },
+    { "required": ["proposal_id"] }
+  ],
+  "additionalProperties": true
+}

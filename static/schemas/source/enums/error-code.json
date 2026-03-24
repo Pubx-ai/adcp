@@ -31,7 +31,15 @@
     "MEDIA_BUY_NOT_FOUND",
     "NOT_CANCELLABLE",
     "PACKAGE_NOT_FOUND",
-    "VALIDATION_ERROR"
+    "VALIDATION_ERROR",
+    "SEGMENT_NOT_FOUND",
+    "DEAL_NOT_FOUND",
+    "PLATFORM_NOT_SUPPORTED",
+    "DSP_NOT_SUPPORTED",
+    "ACTIVATION_FAILED",
+    "INVALID_DEAL_STATE",
+    "INVALID_PRICING",
+    "INVALID_DATES"
   ],
   "enumDescriptions": {
     "INVALID_REQUEST": "Request is malformed, missing required fields, or violates schema constraints. Recovery: correctable (check request parameters and fix).",
@@ -60,6 +68,14 @@
     "MEDIA_BUY_NOT_FOUND": "Referenced media buy does not exist or is not accessible to the requesting agent. Recovery: correctable (verify media_buy_id or buyer_ref).",
     "NOT_CANCELLABLE": "The media buy or package cannot be canceled in its current state. The seller may have contractual or operational constraints that prevent cancellation. Recovery: correctable (check the seller's cancellation policy or contact the seller).",
     "PACKAGE_NOT_FOUND": "Referenced package does not exist within the specified media buy. Recovery: correctable (verify package_id or buyer_ref via get_media_buys).",
-    "VALIDATION_ERROR": "Request contains invalid field values or violates business rules beyond schema validation. Recovery: correctable (review error details and fix field values)."
+    "VALIDATION_ERROR": "Request contains invalid field values or violates business rules beyond schema validation. Recovery: correctable (review error details and fix field values).",
+    "SEGMENT_NOT_FOUND": "One or more referenced segment IDs are unknown or expired. Recovery: correctable (remove invalid IDs and retry, or re-discover with get_segments).",
+    "DEAL_NOT_FOUND": "One or more referenced deal IDs are unknown. Recovery: correctable (verify deal ID via get_deals).",
+    "PLATFORM_NOT_SUPPORTED": "The specified SSP platform is not supported by this curator or for the requested segments. Recovery: correctable (check list_platforms for available platforms).",
+    "DSP_NOT_SUPPORTED": "One or more specified DSPs are not available on the target SSP platform. Recovery: correctable (check list_platforms for supported DSP integrations).",
+    "ACTIVATION_FAILED": "Deal activation failed on the SSP platform. Recovery: transient (may be retried) or correctable (check error details for SSP-specific requirements).",
+    "INVALID_DEAL_STATE": "The requested operation is not allowed for the deal's current status. Recovery: correctable (check deal status via get_deals before retrying).",
+    "INVALID_PRICING": "Pricing configuration is invalid for the target platform or deal type. Recovery: correctable (check platform requirements via list_platforms and adjust pricing).",
+    "INVALID_DATES": "Date range is invalid, out of order, or in the past. Recovery: correctable (verify start_time is before end_time and both are in the future)."
   }
 }

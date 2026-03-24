@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/schemas/curation/list-platforms-request.json",
+  "title": "List Platforms Request",
+  "description": "Request parameters for listing available SSP platforms and their capabilities. Returns platforms the curator can activate deals on, with supported deal types, ad formats, and DSP integrations.",
+  "type": "object",
+  "properties": {
+    "ad_format_types": {
+      "type": "array",
+      "description": "Filter platforms to those supporting these ad format types",
+      "items": {
+        "$ref": "/schemas/enums/ssp-ad-format-type.json"
+      },
+      "uniqueItems": true
+    },
+    "deal_types": {
+      "type": "array",
+      "description": "Filter platforms to those supporting these deal types",
+      "items": {
+        "$ref": "/schemas/enums/deal-type.json"
+      },
+      "uniqueItems": true
+    },
+    "context": {
+      "$ref": "/schemas/core/context.json"
+    },
+    "ext": {
+      "$ref": "/schemas/core/ext.json"
+    }
+  },
+  "additionalProperties": true
+}

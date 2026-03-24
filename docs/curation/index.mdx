@@ -1,0 +1,94 @@
+---
+title: Curation Protocol
+sidebarTitle: Overview
+description: Discover curated audience segments and activate deals on SSP platforms
+---
+
+The Curation Protocol enables AI agents to discover curated audience segments and activate them as programmatic deals on Supply-Side Platforms (SSPs). It is a sibling to the [Media Buy Protocol](/docs/media-buy/index) — while media buy handles direct publisher inventory, curation handles packaged audience segments activated through SSP infrastructure.
+
+<Info>
+The Curation Protocol is new in AdCP 3.0. Schemas are available at `/schemas/latest/curation/`.
+</Info>
+
+## How curation differs from media buy
+
+| Dimension | Media Buy | Curation |
+|-----------|-----------|----------|
+| **Seller** | Publisher (owns inventory) | Curator (packages audiences across publishers) |
+| **Execution** | Publisher's ad server | SSP platform (Magnite, PubMatic, etc.) |
+| **Core entity** | Product (inventory slot) | Segment (audience/context definition) |
+| **Transaction** | Campaign / media buy | Deal on SSP |
+| **Pricing** | 9 models (CPM, CPC, CPA, ...) | CPM only (floor or fixed) |
+| **Discovery** | `get_products` | `get_segments` |
+| **Activation** | `create_media_buy` | `create_deal` |
+
+## Protocol flow
+
+The curation workflow has three phases: **discover**, **select**, and **activate**.
+
+```mermaid
+sequenceDiagram
+    participant Buyer as Buyer Agent
+    participant Curator as Curator Agent
+    participant SSP as SSP Platform
+
+    Note over Buyer,Curator: Discovery
+    Buyer->>Curator: get_segments (brief / catalog / refine)
+    Curator-->>Buyer: segments[] + proposals[]
+    Buyer->>Curator: list_platforms
+    Curator-->>Buyer: platforms[] with DSP integrations
+
+    Note over Buyer,SSP: Activation
+    Buyer->>Curator: create_deal (segments, platform, DSP seats, pricing)
+    Curator->>SSP: Create PMP / Curated deal
+    SSP-->>Curator: ssp_deal_id
+    Curator-->>Buyer: deal_id + ssp_deal_id + status
+
+    Note over Buyer,SSP: Monitoring
+    Buyer->>Curator: get_deals / get_deal_delivery
+    Curator-->>Buyer: deal status + delivery metrics
+    Buyer->>Curator: provide_deal_performance_feedback
+```
+
+1. **Discover segments** — Use `get_segments` with a natural language brief, structured filters, or refinement of previous results
+2. **Review platforms** — Use `list_platforms` to see which SSPs and DSPs are available
+3. **Create deal** — Use `create_deal` to activate selected segments as a deal on an SSP, specifying the buyer's DSP seat IDs
+4. **Monitor** — Use `get_deals` and `get_deal_delivery` to track status and performance
+
+## Tasks
+
+| Phase | Task | Purpose |
+|-------|------|---------|
+| Discovery | [`get_segments`](/docs/curation/task-reference/get_segments) | Find audience segments |
+| Discovery | [`list_platforms`](/docs/curation/task-reference/list_platforms) | List SSP platforms and capabilities |
+| Execution | [`create_deal`](/docs/curation/task-reference/create_deal) | Activate deal on SSP |
+| Execution | [`update_deal`](/docs/curation/task-reference/update_deal) | Modify deal (pricing, dates, pause) |
+| Monitoring | [`get_deals`](/docs/curation/task-reference/get_deals) | List and filter deals |
+| Monitoring | [`get_deal_delivery`](/docs/curation/task-reference/get_deal_delivery) | Delivery metrics |
+| Monitoring | [`provide_deal_performance_feedback`](/docs/curation/task-reference/provide_deal_performance_feedback) | Send DSP metrics to curator |
+
+## Key design decisions
+
+- **Single platform per deal** — Each `create_deal` call activates on one SSP. Deal IDs are SSP-scoped. For multi-platform activation, make separate calls.
+- **CPM-only pricing** — SSP deals are always CPM-based. Use `floor_price` for auction-based deals (curated, PMP) or `fixed_price` for guaranteed deals.
+- **Buyer seat IDs** — Buyers provide their DSP `seat_id` in `create_deal`. The SSP routes the deal to that seat.
+- **Optional fee transparency** — Curators can disclose margin structure (`curator_fee`) aligned with IAB Deals API v1.0.
+- **Same async patterns** — Uses `completed`, `working`, `submitted` status flow and `push_notification_config` webhooks, identical to media buy.
+
+## Capability declaration
+
+Curators declare curation support in `get_adcp_capabilities`:
+
+```json
+{
+  "supported_protocols": ["curation"],
+  "curation": {
+    "supported_platforms": [
+      { "platform_id": "magnite", "platform_name": "Magnite" }
+    ],
+    "supported_deal_types": ["curated", "pmp"],
+    "supported_ad_format_types": ["banner", "video", "native"],
+    "curator_fee_disclosure": true
+  }
+}
+```

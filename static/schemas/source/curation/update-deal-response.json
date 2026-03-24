@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/schemas/curation/update-deal-response.json",
+  "title": "Update Deal Response",
+  "description": "Response payload for update_deal task. Returns either the updated deal state OR error information, never both.",
+  "type": "object",
+  "oneOf": [
+    {
+      "title": "UpdateDealSuccess",
+      "description": "Success response — deal updated successfully",
+      "type": "object",
+      "properties": {
+        "deal": {
+          "$ref": "/schemas/core/deal.json",
+          "description": "The updated deal with current state"
+        },
+        "sandbox": {
+          "type": "boolean",
+          "description": "When true, this response contains simulated data from sandbox mode."
+        },
+        "context": {
+          "$ref": "/schemas/core/context.json"
+        },
+        "ext": {
+          "$ref": "/schemas/core/ext.json"
+        }
+      },
+      "required": ["deal"],
+      "additionalProperties": true,
+      "not": {
+        "required": ["errors"]
+      }
+    },
+    {
+      "title": "UpdateDealError",
+      "description": "Error response — update failed",
+      "type": "object",
+      "properties": {
+        "errors": {
+          "type": "array",
+          "description": "Array of errors explaining why the update failed",
+          "items": {
+            "$ref": "/schemas/core/error.json"
+          },
+          "minItems": 1
+        },
+        "context": {
+          "$ref": "/schemas/core/context.json"
+        },
+        "ext": {
+          "$ref": "/schemas/core/ext.json"
+        }
+      },
+      "required": ["errors"],
+      "additionalProperties": true,
+      "not": {
+        "anyOf": [
+          { "required": ["deal"] },
+          { "required": ["sandbox"] }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,211 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/schemas/curation/get-segments-request.json",
+  "title": "Get Segments Request",
+  "description": "Request parameters for discovering or refining curated audience segments. buying_mode declares the buyer's intent: 'brief' for curated discovery using natural language, 'catalog' for structured browsing of the segment catalog, or 'refine' to iterate on known segments.",
+  "type": "object",
+  "properties": {
+    "buying_mode": {
+      "type": "string",
+      "enum": ["brief", "catalog", "refine"],
+      "description": "Declares buyer intent for this request. 'brief': curator recommends segments from the provided natural language description. 'catalog': buyer browses the raw segment catalog with structured filters — brief must not be provided. 'refine': iterate on segments from a previous get_segments response using the refine array of change requests."
+    },
+    "brief": {
+      "type": "string",
+      "description": "Natural language description of desired audience or inventory. Required when buying_mode is 'brief'. Must not be provided when buying_mode is 'catalog' or 'refine'."
+    },
+    "refine": {
+      "type": "array",
+      "description": "Array of change requests for iterating on segments from a previous get_segments response. Each entry declares a scope (request or segment) and what the buyer is asking for. Only valid when buying_mode is 'refine'.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "oneOf": [
+          {
+            "properties": {
+              "scope": {
+                "type": "string",
+                "const": "request",
+                "description": "Change scoped to the overall request — direction for the selection as a whole."
+              },
+              "ask": {
+                "type": "string",
+                "minLength": 1,
+                "description": "What the buyer is asking for at the request level (e.g., 'more video segments', 'higher scale options only')."
+              }
+            },
+            "required": ["scope", "ask"],
+            "additionalProperties": false
+          },
+          {
+            "properties": {
+              "scope": {
+                "type": "string",
+                "const": "segment",
+                "description": "Change scoped to a specific segment."
+              },
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Segment ID from a previous get_segments response."
+              },
+              "action": {
+                "type": "string",
+                "enum": ["include", "omit", "more_like_this"],
+                "description": "'include': return this segment with updated data. 'omit': exclude this segment from the response. 'more_like_this': find additional segments similar to this one (the original is also returned)."
+              },
+              "ask": {
+                "type": "string",
+                "minLength": 1,
+                "description": "What the buyer is asking for on this segment. For 'include': specific changes (e.g., 'also show mobile coverage'). For 'more_like_this': what 'similar' means (e.g., 'same audience but different geos'). Ignored when action is 'omit'."
+              }
+            },
+            "required": ["scope", "id", "action"],
+            "additionalProperties": false
+          }
+        ]
+      }
+    },
+    "filters": {
+      "type": "object",
+      "description": "Structured filters to narrow segment results. Can be combined with brief for guided discovery.",
+      "properties": {
+        "countries": {
+          "type": "array",
+          "description": "Filter to segments with coverage in these countries (ISO 3166-1 alpha-2)",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}$"
+          },
+          "uniqueItems": true
+        },
+        "devices": {
+          "type": "array",
+          "description": "Filter to segments with coverage on these device types",
+          "items": {
+            "type": "string",
+            "enum": ["desktop", "mobile", "tablet", "ctv"]
+          },
+          "uniqueItems": true
+        },
+        "ad_format_types": {
+          "type": "array",
+          "description": "Filter to segments supporting these ad format types",
+          "items": {
+            "$ref": "/schemas/enums/ssp-ad-format-type.json"
+          },
+          "uniqueItems": true
+        },
+        "platforms": {
+          "type": "array",
+          "description": "Filter to segments available on these SSP platform IDs",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "categories": {
+          "type": "array",
+          "description": "Filter to segments matching these category labels",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "min_daily_impressions": {
+          "type": "number",
+          "description": "Minimum estimated daily impressions",
+          "minimum": 0
+        },
+        "max_floor_cpm": {
+          "type": "number",
+          "description": "Maximum acceptable floor CPM — exclude segments with pricing guidance above this value",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "brand": {
+      "$ref": "/schemas/core/brand-ref.json",
+      "description": "Brand reference for segment discovery context. Curators may use brand information to filter segments by brand safety or category alignment."
+    },
+    "account": {
+      "$ref": "/schemas/core/account-ref.json",
+      "description": "Buyer's account with the curator. When provided, returns segments with account-specific pricing."
+    },
+    "fields": {
+      "type": "array",
+      "description": "Specific segment fields to include in the response. When omitted, all fields are returned. Required fields (segment_id, name) are always included.",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "enum": [
+          "segment_id",
+          "name",
+          "description",
+          "categories",
+          "targeting_summary",
+          "estimated_daily_impressions",
+          "estimated_reach",
+          "supported_platforms",
+          "supported_ad_format_types",
+          "countries",
+          "devices",
+          "pricing_guidance",
+          "status",
+          "version",
+          "brief_relevance"
+        ]
+      }
+    },
+    "pagination": {
+      "$ref": "/schemas/core/pagination-request.json"
+    },
+    "context": {
+      "$ref": "/schemas/core/context.json"
+    },
+    "ext": {
+      "$ref": "/schemas/core/ext.json"
+    }
+  },
+  "required": ["buying_mode"],
+  "oneOf": [
+    {
+      "properties": {
+        "buying_mode": {
+          "const": "brief"
+        },
+        "refine": false
+      },
+      "required": [
+        "buying_mode",
+        "brief"
+      ]
+    },
+    {
+      "properties": {
+        "buying_mode": {
+          "const": "catalog"
+        },
+        "brief": false,
+        "refine": false
+      },
+      "required": [
+        "buying_mode"
+      ]
+    },
+    {
+      "properties": {
+        "buying_mode": {
+          "const": "refine"
+        },
+        "brief": false
+      },
+      "required": [
+        "buying_mode",
+        "refine"
+      ]
+    }
+  ],
+  "additionalProperties": true
+}

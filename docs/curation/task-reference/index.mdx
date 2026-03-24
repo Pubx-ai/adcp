@@ -1,0 +1,34 @@
+---
+title: Task reference
+sidebarTitle: Overview
+description: Complete reference for all curation protocol tasks
+---
+
+## All tasks
+
+| Task | Phase | Purpose | Response time |
+|------|-------|---------|---------------|
+| [`get_segments`](/docs/curation/task-reference/get_segments) | Discovery | Find audience segments using briefs, catalog browsing, or refinement | < 30s |
+| [`list_platforms`](/docs/curation/task-reference/list_platforms) | Discovery | List available SSP platforms with capabilities and DSP integrations | < 5s |
+| [`create_deal`](/docs/curation/task-reference/create_deal) | Execution | Activate a deal on an SSP from selected segments or a proposal | < 120s or async |
+| [`get_deals`](/docs/curation/task-reference/get_deals) | Monitoring | List and filter deals by ID, status, platform, or buyer reference | < 10s |
+| [`update_deal`](/docs/curation/task-reference/update_deal) | Execution | Update deal pricing, dates, or pause/resume status | < 30s or async |
+| [`get_deal_delivery`](/docs/curation/task-reference/get_deal_delivery) | Monitoring | Retrieve delivery metrics (impressions, spend, bids, wins, win rate) | < 15s |
+| [`provide_deal_performance_feedback`](/docs/curation/task-reference/provide_deal_performance_feedback) | Monitoring | Send DSP-side performance metrics back to curator for optimization | < 5s |
+
+## Response time categories
+
+- **Immediate** (< 5s): Simple lookups and listings
+- **Standard** (< 30s): Discovery and search operations
+- **Extended** (< 120s): SSP activation operations
+- **Async**: Operations that may require human approval or extended SSP processing
+
+## Common patterns
+
+All curation tasks follow AdCP conventions:
+
+- **Discriminated union responses**: Success data OR errors, never both
+- **Async status flow**: `completed`, `working`, `submitted` for long-running operations
+- **Idempotency**: `buyer_ref` + `account` deduplication on `create_deal`
+- **Pagination**: Cursor-based via `pagination` on list operations
+- **Extensions**: `ext` field for platform-specific data

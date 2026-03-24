@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "/schemas/enums/ssp-ad-format-type.json",
+  "title": "SSP Ad Format Type",
+  "description": "Ad format types as categorized by SSP platforms for deal configuration.",
+  "type": "string",
+  "enum": [
+    "banner",
+    "video",
+    "native",
+    "audio"
+  ],
+  "enumDescriptions": {
+    "banner": "Display banner ads (all standard IAB sizes)",
+    "video": "Video ads (instream, outstream, CTV)",
+    "native": "Native ads integrated into content",
+    "audio": "Audio ads (podcasts, streaming)"
+  }
+}
